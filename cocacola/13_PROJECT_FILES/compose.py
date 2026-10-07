@@ -35,6 +35,12 @@ def label(L, t, t0, text, y=300, accent=CYAN, size=36):
 
 
 A = f"{ROOT}/06_ARCHIVE"
+
+
+def bpath(vid):
+    """B-roll file by Mixkit id (download names are truncated)"""
+    hits = [f for f in os.listdir(B) if f.startswith(f"mixkit_{vid}_")]
+    return f"{B}/{hits[0]}"
 SERIF = "/usr/share/fonts/truetype/dejavu/DejaVuSerif-Bold.ttf"
 CREAM = (238, 226, 196, 255)
 COKE_RED = (205, 30, 40, 255)
@@ -253,21 +259,71 @@ def shot_3d(name, t0, extra=None):
     return fn
 
 
+HOOK_IMPACT = 0.8
+HOOK_MOL = 1.2
+
+
+def hook_pour_fn(clip):
+    def fn(t, fi):
+        z = 1.32 - 0.14 * eo(lin(t, 0, 1.2))
+        sx = sy = 0.0
+        if t >= HOOK_IMPACT:
+            k = 26 * math.exp(-(t - HOOK_IMPACT) * 10)
+            sx, sy = k * math.sin(t * 90), k * math.cos(t * 70)
+        im = clip.frame(t, z)
+        im = im.transform((W, H), Image.AFFINE, (1, 0, sx, 0, 1, sy), Image.BICUBIC)
+        f = grade(im, "warm")
+        f = np.clip((f - 128) * 1.18 + 128, 0, 255)  # extra punch for the very first frames
+        if t < 0.07:
+            f = f + 140 * (1 - t / 0.07)
+        if HOOK_IMPACT <= t < HOOK_IMPACT + 0.1:
+            f = f + 170 * (1 - (t - HOOK_IMPACT) / 0.1)
+        L = Image.new("RGBA", (W, H))
+        p = eback(lin(t, 0.28, 0.48), 2.2)
+        f = f * (1 - 0.35 * clamp(p))
+        put(L, text_img("COCA", "anton", 250, WHITE, 0, (0, 0, 0, 255), 12), W / 2 - 230, 860, 1.5 - 0.5 * clamp(p), clamp(p * 2))
+        m = lin(t, HOOK_IMPACT - 0.02, HOOK_IMPACT + 0.12)
+        old = text_img("-COLA", "anton", 250, WHITE, 0, (0, 0, 0, 255), 12)
+        put(L, old, W / 2 + 240 + 220 * eo(m), 860 - 160 * eo(m), 1.5 - 0.5 * clamp(p) + 0.6 * m, clamp(p * 2) * (1 - eo(m)), -40 * m)
+        if m > 0:
+            new = text_img("INE", "anton", 250, ACCENT, 0, (0, 0, 0, 255), 12)
+            sc = 1.6 - 0.6 * eback(m, 2.6)
+            put(L, glow(pad_img(new, 30), 30, (255, 30, 30), 0.9), W / 2 + 150, 860, sc, clamp(m * 2))
+            put(L, new, W / 2 + 150, 860, sc, clamp(m * 2))
+        return f, L
+    return fn
+
+
+def hook_mol_fn(clip):
+    """1.2 s: the bubbles 'become' the molecule (3D render screened over the soda macro), then the question"""
+    def fn(t, fi):
+        lt = t - HOOK_MOL
+        im = clip.frame(lt, 1.12 + 0.06 * lt)
+        f = grade(im, "warm") * 0.42
+        mol = np.asarray(seq_frame("mol_in", int(round(lt * FPS)))).astype(np.float32)
+        f = 255 - (255 - f) * (255 - mol * 1.15) / 255  # screen blend
+        if lt < 0.08:
+            f = f + 120 * (1 - lt / 0.08)
+        L = Image.new("RGBA", (W, H))
+        q = eback(lin(t, 2.0, 2.25))
+        put(L, chip("THE ORIGINAL RECIPE?", GOLD, 44), W / 2, 330, 0.9 + 0.1 * clamp(q), clamp(q))
+        credit(L, "Structure: PubChem CID 446220 (3D conformer)")
+        return f, L
+    return fn
+
+
 def hook_extra(t, f, L):
     """over the bubbles: COCA-COLA, then the second half turns into -INE on 'cocaine'"""
-    t0, tc = T["bubbles"], T["cocaine"]
-    p = eo(lin(t, t0 + 0.05, t0 + 0.35))
-    f = f * (0.55 + 0.1 * (1 - p))
-    left = text_img("COCA", "anton", 210, WHITE, 0, (0, 0, 0, 255), 10)
-    put(L, left, W / 2 - 205, 820, 1, p)
-    m = lin(t, tc - 0.05, tc + 0.18)
-    right_old = text_img("-COLA", "anton", 210, WHITE, 0, (0, 0, 0, 255), 10)
-    right_new = text_img("INE", "anton", 210, ACCENT, 0, (0, 0, 0, 255), 10)
-    put(L, right_old, W / 2 + 175, 820 - 80 * eo(m), 1, p * (1 - eo(m)))
+    tc = T["cocaine"]
+    f = f * 0.5
+    m = eback(lin(t, tc - 0.06, tc + 0.16), 2.4)
     if m > 0:
-        put(L, glow(pad_img(right_new, 30), 24, (255, 40, 40), 0.8), W / 2 + 130, 820 + 60 * (1 - eo(m)), 1, eo(m))
-        put(L, right_new, W / 2 + 130, 820 + 60 * (1 - eo(m)), 1, eo(m))
-        put(L, text_img("?", "anton", 210, ACCENT), W / 2 + 330, 820, 1, eo(lin(t, tc + 0.25, tc + 0.45)))
+        w = text_img("COCAINE?", "anton", 230, ACCENT, 0, (0, 0, 0, 255), 12)
+        put(L, glow(pad_img(w, 30), 30, (255, 30, 30), 0.8), W / 2, 860, 1.5 - 0.5 * m, clamp(m * 2))
+        put(L, w, W / 2, 860, 1.5 - 0.5 * m, clamp(m * 2))
+        if t < tc + 0.1:
+            f = f + 110 * (1 - lin(t, tc - 0.02, tc + 0.1))
+    put(L, chip("THE ORIGINAL RECIPE?", GOLD, 44), W / 2, 330, 1, 1 - lin(t, T["bubbles"] + 0.3, T["bubbles"] + 0.6))
     return f
 
 
@@ -429,11 +485,20 @@ def shot_name(t, fi):
     return f, L
 
 
-CLAIMS = [("energy", "ENERGY!", 520), ("headaches", "CURES HEADACHES!", 760), ("feel", "FEEL AMAZING!", 1000)]
+CLAIMS = [("headaches", "CURES HEADACHES!", 640)]
+
+
+def claim_banner(txt):
+    banner = Image.new("RGBA", (900, 150))
+    d = ImageDraw.Draw(banner)
+    d.rounded_rectangle((0, 0, 899, 149), radius=14, fill=(236, 224, 190, 245), outline=(120, 30, 20, 255), width=6)
+    tx = serif_text(txt, 70 if len(txt) < 12 else 58, (130, 20, 15, 255), 0)
+    banner.alpha_composite(tx, (450 - tx.width // 2, 75 - tx.height // 2))
+    return banner
 
 
 def shot_claims(t, fi):
-    t0 = T["people"]
+    t0 = T["claims_ad"]
     ad = archive("loc_drink_coca_cola_5c_1890s.tif")
     bg = cover(ad, W, H, 0.5, 0.35, 1.25 + 0.12 * eio(lin(t, t0, t0 + 4.3)))
     L = Image.new("RGBA", (W, H))
@@ -443,15 +508,59 @@ def shot_claims(t, fi):
         p = eback(lin(t, tw - 0.05, tw + 0.25))
         if p <= 0:
             continue
-        banner = Image.new("RGBA", (900, 150))
-        d = ImageDraw.Draw(banner)
-        d.rounded_rectangle((0, 0, 899, 149), radius=14, fill=(236, 224, 190, 245), outline=(120, 30, 20, 255), width=6)
-        tx = serif_text(txt, 70 if len(txt) < 12 else 58, (130, 20, 15, 255), 0)
-        banner.alpha_composite(tx, (450 - tx.width // 2, 75 - tx.height // 2))
-        put(L, banner, W / 2, y, 0.85 + 0.15 * clamp(p), clamp(p), (-3, 2, -2)[k])
-    put(L, text_img("CLAIMS OF THE ERA", "mono", 30, GOLD), W / 2, 300, 1, eo(lin(t, t0, t0 + 0.3)))
+        put(L, claim_banner(txt), W / 2, y, 0.85 + 0.15 * clamp(p), clamp(p), 2)
     credit(L, "Background: 'Drink Coca-Cola 5¢', 1890s, Library of Congress")
     return f, L
+
+
+def vintage(f):
+    """old-film treatment for 'period' human moments: warm sepia, lifted blacks, flicker"""
+    lum = f @ np.array([0.299, 0.587, 0.114], np.float32)
+    sep = np.stack([lum * 1.08 + 12, lum * 0.95 + 6, lum * 0.78], -1)
+    return f * 0.35 + sep * 0.65
+
+
+def energy_fx(t, f, L):
+    f = vintage(f)
+    p = eback(lin(t, wt("energy", 23) - 0.05, wt("energy", 23) + 0.25))
+    put(L, claim_banner("ENERGY!"), W / 2, 520, 0.85 + 0.15 * clamp(p), clamp(p), -3)
+    put(L, text_img("CLAIMS OF THE ERA", "mono", 34, GOLD), W / 2, 300, 1, eo(lin(t, T["people"], T["people"] + 0.3)))
+    return f
+
+
+def amazing_fx(t, f, L):
+    f = vintage(f) * 1.05
+    p = eback(lin(t, wt("feel", 23) - 0.05, wt("feel", 23) + 0.25))
+    put(L, claim_banner("FEEL AMAZING!"), W / 2, 520, 0.85 + 0.15 * clamp(p), clamp(p), 2)
+    return f
+
+
+def ofcourse_fx(t, f, L):
+    p = eo(lin(t, T["ofcourse"] + 0.5, T["ofcourse"] + 0.8))
+    put(L, chip("IT HAD COCAINE IN IT.", ACCENT, 40), W / 2, 1260, 1, p)
+    return f
+
+
+_DOF_MASK = None
+
+
+def tilt_shift(f, sharp_until=0.42, full_blur_at=0.62, radius=14):
+    """lens-style depth of field: top of frame sharp, falling off to a soft blur below"""
+    global _DOF_MASK
+    if _DOF_MASK is None:
+        y = np.linspace(0, 1, H)[:, None, None]
+        _DOF_MASK = np.clip((y - sharp_until) / (full_blur_at - sharp_until), 0, 1).astype(np.float32)
+    img = Image.fromarray(np.clip(f, 0, 255).astype(np.uint8))
+    small = img.resize((W // 4, H // 4), Image.BILINEAR).filter(ImageFilter.GaussianBlur(radius / 4))
+    bl = np.asarray(small.resize((W, H), Image.BILINEAR)).astype(np.float32)
+    return f * (1 - _DOF_MASK) + bl * _DOF_MASK
+
+
+def news_fx(t, f, L):
+    f = tilt_shift(vintage(f) * 0.9, 0.36, 0.55, 22)
+    pf = eo(lin(t, T["fear"] - 0.1, T["fear"] + 0.25))
+    put(L, chip("PUBLIC FEAR OVER COCAINE GROWS", ACCENT, 38), W / 2, 300, 0.9 + 0.1 * pf, pf)
+    return f
 
 
 def mol_in_fx(t, f, L):
@@ -493,8 +602,6 @@ def shot_timeline(t, fi):
         d.line((xx, y - 20, xx, y + 20), fill=(200, 180, 140, 255), width=3)
         put(L, text_img(str(yr), "mono", 30, CREAM if xf <= p + 0.01 else (120, 100, 70, 255)), xx, y + 60)
     put(L, text_img("1903", "anton", 200, GOLD, 0, (0, 0, 0, 255), 10), W / 2, 560, 1, eo(lin(t, T["y1903"] - 0.1, T["y1903"] + 0.25)))
-    pf = eo(lin(t, T["fear"] - 0.1, T["fear"] + 0.25))
-    put(L, chip("PUBLIC FEAR OVER COCAINE GROWS", ACCENT, 36), W / 2, 1040, 0.9 + 0.1 * pf, pf)
     return grade(bg, "none"), L
 
 
@@ -557,18 +664,25 @@ def build():
         jersey=wt("Jersey"), open=wt("So", 48) - 0.1, opencue=wt("open"), remember=wt("remember") - 0.1,
         name_end=wt("name", 50),
     )
+    T.update(claims_ad=wt("cured") - 0.12, amazing=wt("made", 25) - 0.1, news=wt("public") - 0.12)
     clips = {
-        "pour": VideoClip(f"{B}/mixkit_5081_top-of-a-glass-with-cola-in-detail.mp4", 1.5, 0.42, T["bubbles"] + 0.1),
-        "bubbles": VideoClip(f"{B}/mixkit_5080_texture-of-bubbles-from-a-soda.mp4", 4.0, 0.5, 3.1),
-        "drink": VideoClip(f"{B}/mixkit_5096_filling-a-glass-with-soda-from-a-bottle.mp4", 4.0, 0.5, 2.0),
-        "can": VideoClip(f"{B}/mixkit_5077_spilling-a-can-of-cola.mp4", 2.0, 0.5, 2.9),
-        "lab": VideoClip(f"{B}/mixkit_4719_scientist-mixing-liquids-in-a-laboratory.mp4", 3.0, 0.62, 3.3),
-        "open": VideoClip(f"{B}/mixkit_5093_opening-a-bottle-of-cola.mp4", 7.4 - (T["opencue"] - T["open"]), 0.4, 2.2),
-        "end": VideoClip(f"{B}/mixkit_5083_ice-falling-into-a-glass-with-soda.mp4", 2.0, 0.5, END - T["remember"] + 0.1),
+        "pour": VideoClip(bpath("5081"), 1.2, 0.42, HOOK_MOL + 0.1),
+        "molbg": VideoClip(bpath("5080"), 9.0, 0.5, 1.6),
+        "bubbles": VideoClip(bpath("5080"), 4.0, 0.5, 2.6),
+        "retro": VideoClip(bpath("41357"), 0.6, 0.5, 1.8),
+        "cheers": VideoClip(bpath("5085"), 1.9, 0.5, 1.6),
+        "wry": VideoClip(bpath("5088"), 1.2, 0.5, 1.5),
+        "news": VideoClip(bpath("41191"), 4.0, 0.66, 1.6),
+        "drink": VideoClip(bpath("5096"), 4.0, 0.5, 2.0),
+        "can": VideoClip(bpath("5077"), 2.0, 0.5, 2.9),
+        "lab": VideoClip(bpath("4719"), 3.0, 0.62, 3.3),
+        "open": VideoClip(bpath("5093"), 7.4 - (T["opencue"] - T["open"]), 0.4, 2.2),
+        "end": VideoClip(bpath("5083"), 2.0, 0.5, END - T["remember"] + 0.1),
     }
     edl = [
-        (0.0, T["bubbles"], shot_video(clips["pour"], 0.0, 1.0, 1.1, "warm"), "pour"),
-        (T["bubbles"], T["joke"], shot_video(clips["bubbles"], T["bubbles"], 1.05, 1.15, "warm", hook_extra), "bubbles"),
+        (0.0, HOOK_MOL, hook_pour_fn(clips["pour"]), "pour"),
+        (HOOK_MOL, HOOK_MOL + 44 / FPS, hook_mol_fn(clips["molbg"]), "molbg"),
+        (HOOK_MOL + 44 / FPS, T["joke"], shot_video(clips["bubbles"], HOOK_MOL + 44 / FPS, 1.05, 1.15, "warm", hook_extra), "bubbles"),
         (T["joke"], T["atl"], shot_archive("loc_drink_coca_cola_5c_1890s.tif", T["joke"], 1.9, 0.5, 0.3, 1.0, 1.12, "warm",
                                           ad_fx("REAL 1890s ADVERTISEMENT", 0.3)), None),
         (T["atl"], T["pharm"], shot_map_atlanta, None),
@@ -578,10 +692,13 @@ def build():
         (T["medicine"] - 0.15, T["coca1"], shot_formula, None),
         (T["coca1"], T["name"], shot_ingredients, None),
         (T["name"], T["people"], shot_name, None),
-        (T["people"], T["ofcourse"], shot_claims, None),
-        (T["ofcourse"], T["crazy"], shot_3d("mol_in", T["ofcourse"], mol_in_fx), None),
+        (T["people"], T["claims_ad"], shot_video(clips["retro"], T["people"], 1.0, 1.06, "warm", energy_fx), "retro"),
+        (T["claims_ad"], T["amazing"], shot_claims, None),
+        (T["amazing"], T["ofcourse"], shot_video(clips["cheers"], T["amazing"], 1.0, 1.08, "warm", amazing_fx), "cheers"),
+        (T["ofcourse"], T["crazy"], shot_video(clips["wry"], T["ofcourse"], 1.0, 1.06, "warm", ofcourse_fx), "wry"),
         (T["crazy"], T["timeline"], shot_crazy, None),
-        (T["timeline"], T["removed_shot"], shot_timeline, None),
+        (T["timeline"], T["news"], shot_timeline, None),
+        (T["news"], T["removed_shot"], shot_video(clips["news"], T["news"], 1.0, 1.08, "warm", news_fx), "news"),
         (T["removed_shot"], T["leaves"], shot_3d("mol_out", T["removed_shot"], mol_out_fx), None),
         (T["leaves"], T["today"], shot_3d("leaves", T["leaves"], leaves_fx), None),
         (T["today"], T["extract"], shot_video(clips["can"], T["today"], 1.0, 1.08, "warm", today_fx), "can"),
