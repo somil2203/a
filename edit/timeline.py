@@ -8,9 +8,9 @@ FPS = 30
 
 # (src_in, src_out, label)
 EDL = [
-    (12.86, 14.84, "hook"),     # "Nokia ne apni company hi bech di"
+    (12.70, 14.84, "hook"),     # "Nokia ne apni company hi bech di"
     (14.87, 15.45, "kyun"),     # "Kyun?"
-    (16.58, 19.95, "era"),      # "2007 se pehle lagbhag har ghar mein ek Nokia ka phone hota tha"
+    (16.06, 19.95, "era"),      # "2007 se pehle lagbhag har ghar mein ek Nokia ka phone hota tha"
     (22.43, 27.60, "proof"),    # "Wo phone na uski battery ... na kuch repair cost aata tha"
     (28.38, 30.88, "apple"),    # "Lekin jab 2007 mein Apple aaya" + natural beat
     (31.05, 32.70, "flip"),     # "To uske baad poora game palat gaya"
@@ -38,10 +38,10 @@ def src2out(t):
 # Caption words: (text, src_start, src_end, style). "|" = page break.
 # style: None (white), "hl" (yellow), "red", "apple" (white glow)
 _W = [
-    ("NOKIA", 12.88, 13.14, "hl"), ("NE", 13.14, 13.32, None), ("APNI", 13.32, 13.54, None),
+    ("NOKIA", 12.72, 13.14, "hl"), ("NE", 13.14, 13.32, None), ("APNI", 13.32, 13.54, None),
     "|", ("COMPANY", 13.54, 13.94, "hl"), ("HI", 13.94, 14.04, None),
     "|", ("BECH", 14.04, 14.38, "red"), ("DI", 14.38, 14.80, "red"),
-    "|", ("2007", 16.62, 17.00, "hl"), ("SE", 17.00, 17.14, None), ("PEHLE", 17.14, 17.38, None),
+    "|", ("2007", 16.08, 16.75, "hl"), ("SE", 16.80, 17.05, None), ("PEHLE", 17.05, 17.38, None),
     "|", ("LAGBHAG", 17.38, 17.82, None), ("HAR", 17.82, 17.96, "hl"), ("GHAR", 17.96, 18.18, "hl"), ("MEIN", 18.18, 18.38, None),
     "|", ("EK", 18.38, 18.56, None), ("NOKIA", 18.56, 18.86, "hl"),
     "|", ("KA", 18.86, 19.02, None), ("PHONE", 19.02, 19.22, None), ("HOTA", 19.22, 19.44, None), ("THA", 19.44, 19.85, None),
