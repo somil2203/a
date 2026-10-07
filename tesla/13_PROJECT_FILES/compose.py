@@ -733,10 +733,14 @@ def shot_crazy(t, fi):
 def network_fx_wrap(fn):
     def g(t, fi):
         f, L = fn(t, fi)
-        year_tag(L, t, T["y2007"], "2007", 260)
         tp = T["pushed"]
+        if t < tp + 0.3:
+            year_tag(L, t, T["y2007"], "2007", 260)
+            if t >= tp:
+                L2 = Image.new("RGBA", (W, H))
+                year_tag(L2, t, T["y2007"], "2007", 260)
         if t >= tp:
-            put(L, chip("REMOVED AS CEO", ACCENT, 32), W / 2, 420, 1, eo(lin(t, tp, tp + 0.25)))
+            put(L, chip("REMOVED AS CEO", ACCENT, 34), W / 2, 1270, 1, eo(lin(t, tp, tp + 0.25)))
         return f, L
     return g
 
@@ -775,15 +779,15 @@ def shot_document(t, fi):
         paper.alpha_composite(hl, (120, 660 + 4 * 66 - 2))
     # camera: slow push toward the names list
     z = 1.0 + 0.22 * eio(lin(t, t0, t0 + 3.4))
-    cy = 880 + (1240 / 2 - 790) * (z - 1) * 1.3
-    put(L, paper, W / 2, cy, 0.95 * z, eo(lin(t, t0, t0 + 0.25)), -1.5)
+    cy = 740 - 150 * (z - 1)
+    put(L, paper, W / 2, cy, 0.76 * z, eo(lin(t, t0, t0 + 0.25)), -1.5)
     ts = T["cofounder"]
     if t >= ts:
         p = lin(t, ts, ts + 0.12)
         st = rr((560, 150), 18, (0, 0, 0, 0), ACCENT, 10)
         tx = text_img("CO-FOUNDER", "anton", 100, ACCENT)
         st.alpha_composite(tx, (280 - tx.width // 2, 75 - tx.height // 2))
-        put(L, st, 640, 1300, 2.0 - 1.0 * eo(p), clamp(p * 3), 10)
+        put(L, st, 650, 1080, 1.6 - 0.8 * eo(p), clamp(p * 3), 10)
     return grade(bg, "none"), L
 
 
