@@ -3,3 +3,9 @@ node_modules/
 hf-test/renders/
 edit/r3d/
 edit/blender/_tex/
+tesla/04_BROLL/
+tesla/06_ARCHIVE/*.tif
+tesla/07_3D/renders/
+tesla/12_RENDERS/picture.mp4
+tesla/12_RENDERS/stem_*.wav
+tesla/12_RENDERS/mix.wav
