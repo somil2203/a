@@ -875,7 +875,7 @@ def build():
         (T["realf"], T["names"], shot_founders, None),
         (T["names"], END, names_wrap(shot_3d("names", T["names"])), None),
     ]
-    NO_CAPS.extend([(T["wrong"], T["y2003"] + 0.35), (T["money"], T["door"]), (T["crazy"], T["net"])])
+    NO_CAPS.extend([(T["wrong"], T["y2003"] + 0.35), (T["muskname"], T["seriesA"]), (T["money"], T["door"]), (T["crazy"], T["net"])])
     return edl, clips
 
 
