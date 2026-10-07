@@ -19,3 +19,4 @@ cocacola/10_MAPS/data/*.zip
 cocacola/12_RENDERS/picture.mp4
 cocacola/12_RENDERS/FINAL_VIDEO.mp4
 cocacola/12_RENDERS/*.wav
+cocacola/12_RENDERS/log_*.txt
