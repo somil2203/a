@@ -185,9 +185,9 @@ def build_sfx():
     for k in range(10):
         add(b, tick(2600 - k * 120, 0.3), A["era"] + 0.12 + k * 0.06)
     add(b, whoosh(0.35), A["houses_in"] - 0.15, 0.45)
-    for k in range(12):
-        r, c = divmod(k, 6)
-        add(b, pop(700 + (c * 2 + r) * 60), A["houses_in"] + 0.25 + (c * 2 + r) * 0.045, 0.45)
+    add(b, boom(0.9, 90, 35, 0.3), A["houses_in"], 0.5)
+    for k in range(12):  # matches the Blender village: house k lights at frame 12 + 3k
+        add(b, pop(650 + k * 55), A["houses_in"] + (12 + 3 * k) / 30, 0.45)
     add(b, nokia_tune(), A["nokia_word"], 0.28)
     add(b, whoosh(0.3), A["proof"] - 0.1, 0.4)
     add(b, shimmer(0.6), A["proof"] + 0.1, 0.35)
@@ -203,7 +203,8 @@ def build_sfx():
     add(b, printer(0.6), A["receipt"] + 0.3, 0.6)
     add(b, ding(), A["receipt_total"], 0.7)
     add(b, riser(A["beat_hit"] - A["apple_seg"]), A["apple_seg"], 0.55)
-    add(b, boom(0.8, 120, 40, 0.8), A["y2007"], 0.75)
+    add(b, boom(0.8, 120, 40, 0.8), A["y2007"] + 0.15, 0.75)
+    add(b, whoosh(0.6), A["apple_word"] - 0.2, 0.5)
     add(b, shimmer(1.0), A["apple_word"], 0.5)
     add(b, boom(1.6, 80, 28, 1.0), A["beat_hit"], 1.0)
     add(b, reverse_swell(0.3), A["beat_hit"] - 0.3, 0.5)

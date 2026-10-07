@@ -347,6 +347,49 @@ def assets():
     return ASSET
 
 
+# ---------------------------------------------------------------- 3D renders
+R3D = os.environ.get("R3D", os.path.join(HERE, "r3d"))
+CUTS = [  # name, t0, t1
+    ("village", A["houses_in"], A["proof"]),
+    ("battery", A["battery"], A["drop_start"] - 0.5),
+    ("drop", A["drop_start"] - 0.5, A["receipt"]),
+    ("iphone", A["y2007"], A["beat_hit"]),
+]
+
+
+@lru_cache(64)
+def r3d(name, idx):
+    d = os.path.join(R3D, name)
+    files = sorted(f for f in os.listdir(d) if f.endswith(".png"))
+    idx = max(0, min(len(files) - 1, idx))
+    return Image.open(os.path.join(d, files[idx])).convert("RGBA")
+
+
+def active_cut(t):
+    for name, t0, t1 in CUTS:
+        if t0 <= t < t1:
+            return name, t0, t1
+    return None
+
+
+def cutaway_bg(name, t, t0, t1):
+    idx = int(round((t - t0) * FPS))
+    im = r3d(name, idx).convert("RGB")
+    p = lin(t, t0, t1)
+    z = (1.10 - 0.10 * eo(lin(t, t0, t0 + 0.25))) * (1 + 0.04 * p)
+    sx = sy = 0.0
+    for ts, amp in SHAKES:
+        if t >= ts:
+            k = amp * math.exp(-(t - ts) * 9)
+            sx += k * math.sin((t - ts) * 71)
+            sy += k * math.cos((t - ts) * 53)
+    w, h = im.size
+    k = (w / W) / z
+    out = im.transform((W, H), Image.AFFINE, (k, 0, w / 2 - k * W / 2 + sx * k, 0, k, h / 2 - k * H / 2 + sy * k),
+                       Image.BICUBIC)
+    return out.filter(ImageFilter.UnsharpMask(2, 60, 2))
+
+
 # ---------------------------------------------------------------- camera
 SPANS = [  # t0, t1, z0, z1, face_oy
     (0.00, A["kyun"], 1.40, 1.52, .30),
@@ -486,7 +529,7 @@ def draw_panel(t, world, L):
         panel_bg(world, L, a, a)
         sc = 0.56 * (0.7 + 0.3 * eback(lin(t, 0.0, 0.3)))
         ang = 360 * eo(lin(t, 0.0, 0.95)) + 8 * math.sin(t * 3)
-        phone_spin(L, as_["nokia"], as_["nokia_back"], 300, PCY, ang, sc)
+        put(L, r3d("turntable", int(t * FPS)), 300, PCY, 0.62 * (0.7 + 0.3 * eback(lin(t, 0.0, 0.3))))
         ts = A["stamp"]
         if t >= ts:
             p = lin(t, ts, ts + 0.13)
@@ -523,8 +566,7 @@ def draw_panel(t, world, L):
         tb, td, tr = A["battery"], A["drop_start"] - 0.5, A["receipt"]
         if t < tb:  # hero phone
             p = eback(lin(t, A["proof"], A["proof"] + 0.25))
-            put(L, as_["nokia_glow"], PCX, PCY, 0.58 * p, 0.8)
-            put(L, as_["nokia"], PCX, PCY, 0.58 * p)
+            put(L, r3d("nokia_still", 0), PCX, PCY, 0.62 * p)
             sw = lin(t, A["proof"] + 0.1, A["proof"] + 0.4)
             if 0 < sw < 1:
                 g = Image.new("RGBA", (60, 400), (255, 255, 255, 90)).rotate(20, expand=True)
@@ -610,15 +652,34 @@ def draw_panel(t, world, L):
         tb = A["beat_hit"]
         panel_bg(world, L, 1.0)
         p = eo(lin(t, tb, tb + 0.6))
-        nk = as_["nokia"]
+        nk = r3d("nokia_still", 0)
         gray = Image.merge("RGBA", (*(nk.convert("L"),) * 3, nk.getchannel("A")))
-        put(L, nk, 260, PCY + 40 * p, 0.5, 1 - 0.7 * p, -18 * p)
-        put(L, gray, 260, PCY + 40 * p, 0.5, 0.7 * p, -18 * p)
-        put(L, as_["iphone_glow"], 560, PCY - 20 * p, 0.6, 0.8)
-        put(L, as_["iphone"], 560, PCY - 20 * p, 0.6)
+        put(L, nk, 260, PCY + 40 * p, 0.62, 1 - 0.7 * p, -18 * p)
+        put(L, gray, 260, PCY + 40 * p, 0.62, 0.7 * p, -18 * p)
+        put(L, as_["iphone_glow"], 560, PCY - 20 * p, 0.6, 0.5)
+        put(L, r3d("iphone_still", 0), 560, PCY - 20 * p, 0.66)
         put(L, text_img("↓", "black", 120, RED), 140, PCY, 1, p)
         put(L, text_img("↑", "black", 120, GREEN), 760, PCY, 1, p)
         return
+
+
+def draw_cut_overlay(name, t, t0, L):
+    as_ = assets()
+    if name == "battery":
+        tb = A["battery"]
+        day = 1 + int(clamp((t - (tb + 0.45)) / 0.3, 0, 5))
+        put(L, make_chip(f"DAY {day}", YELLOW, 52), 540, 300, 1, eo(lin(t, tb + 0.2, tb + 0.4)))
+        put(L, text_img("BATTERY: STILL 100%", "black", 56, GREEN, 6, (0, 0, 0, 255), 6), 540, 1500, 1,
+            eo(lin(t, tb + 0.9, tb + 1.1)))
+    if name == "drop":
+        th = A["drop_hit"]
+        if t >= th + 0.1:
+            p = lin(t, th + 0.1, th + 0.24)
+            put(L, as_["unbreak"], 540, 1450, (2.0 - 1.0 * eo(p)) * 1.3, clamp(p * 3))
+    if name == "iphone":
+        if t >= A["apple_word"] + 0.25:
+            p = eo(lin(t, A["apple_word"] + 0.25, A["apple_word"] + 0.45))
+            put(L, as_["chip_ip"], 540, 590, 1.1, p)
 
 
 def draw_top(t, L):
@@ -649,13 +710,11 @@ def draw_top(t, L):
     if A["houses_in"] + 0.9 <= t < A["proof"] and t >= A["nokia_word"] + 0.1:
         p = eo(lin(t, A["nokia_word"] + 0.1, A["nokia_word"] + 0.3))
         put(L, as_["chip_no1"], 540, 190 - 30 * (1 - p), 1, p)
-    if A["y2007"] <= t < A["beat_hit"]:
+    if A["y2007"] <= t < A["y2007"]:
         p = lin(t, A["y2007"], A["y2007"] + 0.14)
         sc = (2.0 - 1.0 * eo(p)) * (1 + 0.04 * lin(t, A["y2007"], A["beat_hit"]))
         put(L, as_["y2007"], 540, 250, sc * 0.85, clamp(p * 3))
-    if A["apple_word"] + 0.2 <= t < A["beat_hit"]:
-        p = eo(lin(t, A["apple_word"] + 0.2, A["apple_word"] + 0.4))
-        put(L, as_["chip_ip"], 540, 440, 1, p)
+
     if A["beat_hit"] + 0.1 <= t < A["flip_start"] + 0.1:
         p = eback(lin(t, A["beat_hit"] + 0.1, A["beat_hit"] + 0.3))
         put(L, text_img("GAME CHANGED", "anton", 120, WHITE, 0, (0, 0, 0, 255), 8), 540, 230, p)
@@ -704,7 +763,8 @@ def draw_captions(t, L):
                 sc = k * (0.6 + 0.4 * eback(p))
                 if ws <= t < we:
                     sc *= 1.08
-                put(L, img, x + w / 2, CAP_Y + 14 * (1 - eo(p)), sc, clamp(p * 2.5))
+                cy = 1580 if A["y2007"] <= t < A["beat_hit"] else CAP_Y
+                put(L, img, x + w / 2, cy + 14 * (1 - eo(p)), sc, clamp(p * 2.5))
             x += w + gap * k
         return
 
@@ -746,6 +806,19 @@ def src_frames(src):
 
 
 def compose(src, t, fi):
+    cut = active_cut(t)
+    if cut:
+        bg = cutaway_bg(cut[0], t, cut[1], cut[2])
+        f = np.asarray(bg).astype(np.float32) * assets()["vig"]
+        lt = t - cut[1]
+        if lt < 0.1:  # flash-cut into the 3D shot
+            f = f + 120 * (1 - lt / 0.1)
+        world = Image.fromarray(finish(f, fi)).convert("RGBA")
+        L = Image.new("RGBA", (W, H))
+        draw_cut_overlay(cut[0], t, cut[1], L)
+        draw_top(t, L)
+        world.alpha_composite(L)
+        return world
     z, oy, sx, sy, rot = cam(t)
     bg = transform_src(src, z, oy, 0, 0, 0) if rot == 0 else None
     if rot == 0:
