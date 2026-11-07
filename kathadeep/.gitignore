@@ -1,0 +1,11 @@
+# re-downloadable / intermediate
+art/full/
+art/sm/
+art/other/
+*/picture.mp4
+*/mix.wav
+*/vo/master.wav
+*/qc_*.png
+*/render.log
+__pycache__/
+*/FINAL_*.mp4
