@@ -339,7 +339,45 @@ def shot_razor():
     sc.cycles.volume_step_rate = 4
 
 
-{"diyas2": shot_diyas2, "diyas_close": shot_diyas_close, "chakra": shot_chakra, "fort": shot_fort,
+def shot_diya_ring():
+    """Bhoot Chaturdashi: fourteen lit diyas in a ring on dark stone, seen from a high three-quarter angle."""
+    ground((0.07, 0.05, 0.05), 0.5)
+    for i in range(14):
+        a = 2 * math.pi * i / 14
+        diya(math.cos(a) * 4.2 - 0.5, math.sin(a) * 4.2, True, 0.55)
+    c = cam((0, -9.5, 9.0), (0, 0.4, 0), 40)
+    bg.inputs[0].default_value = (0.02, 0.015, 0.03, 1)
+
+
+def shot_threshold():
+    """Chhoti Diwali at the doorstep: a carved wooden door frame, a stone step and five lit diyas."""
+    ground((0.12, 0.06, 0.04), 0.7)
+    bpy.ops.mesh.primitive_cube_add(size=1, location=(0, 1.2, -0.3))
+    st = bpy.context.object
+    st.scale = (7, 1.6, 0.3)
+    assign(st, mat("step", (0.35, 0.3, 0.27), 0, 0.8))
+    wood = mat("wood", (0.25, 0.1, 0.04), 0, 0.55)
+    for x in (-2.6, 2.6):
+        bpy.ops.mesh.primitive_cube_add(size=1, location=(x, 2.3, 2.4))
+        o = bpy.context.object
+        o.scale = (0.5, 0.5, 5.4)
+        assign(o, wood)
+    bpy.ops.mesh.primitive_cube_add(size=1, location=(0, 2.3, 5.2))
+    o = bpy.context.object
+    o.scale = (5.8, 0.6, 0.6)
+    assign(o, wood)
+    bpy.ops.mesh.primitive_cube_add(size=1, location=(0, 2.6, 2.4))
+    o = bpy.context.object
+    o.scale = (4.7, 0.1, 5.4)
+    assign(o, mat("door", (0.16, 0.06, 0.03), 0, 0.6))
+    for i in range(5):
+        diya(-2.2 + i * 1.1 - 0.4, 1.0, True, 0.42, z=0.0)
+    cam((0.3, -6.5, 1.5), (0, 1.8, 1.6), 38)
+    bg.inputs[0].default_value = (0.015, 0.01, 0.02, 1)
+    light("AREA", (0, -2, 6), 60, (1, 0.6, 0.4), 6)
+
+
+{"diyas2": shot_diyas2, "diya_ring": shot_diya_ring, "threshold": shot_threshold, "diyas_close": shot_diyas_close, "chakra": shot_chakra, "fort": shot_fort,
  "kundal": shot_kundal, "lotus": shot_lotus, "razor": shot_razor}[SHOT]()
 sc.render.filepath = OUT
 bpy.ops.render.render(write_still=True)
