@@ -83,3 +83,10 @@ What v2 does (tools/kdv2.py):
 4. Transition chosen per beat: cut (default) · zoom-punch (emphasis) · whip (place/time change) · flash (reveal/impact) ·
    push (manuscript page turn) · iris (spiritual moment).
 5. One look per reel (manuscript frame / storybook kinetic subtitles / black-and-gold minimal) so consecutive reels don't look alike.
+
+## 7. Visual rule (8 Nov, from the channel owner): one picture per spoken word
+"Lakshmi bole to Lakshmi, Narad to Narad, dhan to dhan." Every named person, place or thing gets its own
+picture on the word (`kdv2.keyword_shots` + `BG_auto`), never the same painting re-cropped over and over.
+No low-poly 3D or stick figures where a real artwork exists; where no authentic image of a figure exists
+(e.g. Durvasa), show the object of the story (the garland) or type, never a different sage labelled as him.
+Never put graphics over a deity's face. Museum numbers / labels must be cropped out.

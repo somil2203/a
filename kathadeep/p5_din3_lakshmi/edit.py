@@ -35,59 +35,53 @@ def credit_footer(base, t, sc):
 
 
 def scenes():
-    s = []
-    s.append(Scene(0, at("आज बड़ी"), kd.BG_framed(f"{A}/78259.jpg", (0.50, 0.40, 0.62), (0.50, 0.34, 0.44)),
-                   caps=[(0.0, "LAKSHMI JI NE", "SWARG CHHOD DIYA THA", RED, 1.3), (at("जानते हैं"), "JAANTE HAIN", "KYUN?", GOLD, at("क्यों"))],
-                   grade_kind=None, vig=False, flash=(0, 0.4, (0, 0, 0))))
-    s.append(Scene(at("आज बड़ी"), at("विष्णु पुराण"), kd.BG_framed(f"{A}/849494.jpg", (0.5, 0.45, 0.8), (0.5, 0.40, 0.6)), fx=[window_tint(120), kdextra.five_diyas(at("आज बड़ी") + 0.3, 3, y=820, x0=92, step=172, size=118)],
-                   caps=[(at("आज बड़ी"), "AAJ BADI DIWALI", None, None), (at("आज तीसरा"), "TEESRA DIYA:", "LAKSHMI PUJA", GOLD, at("लक्ष्मी पूजा"))], grade_kind=None, vig=False))
-    s.append(Scene(at("विष्णु पुराण"), at("देवराज इंद्र"), kd.BG_framed(f"{R3}/mala.png", (0.5, 0.48, 1.0), (0.5, 0.50, 0.80)),
-                   caps=[(at("विष्णु पुराण"), "VISHNU PURAN:", "RISHI DURVASA KI MAALA", GOLD, at("ऋषि दुर्वासा"))],
-                   over=[kd.chips_at([(at("विष्णु पुराण") + 0.3, "VISHNU PURANA 1.9", "c", 1400, REF)])],
-                   fx=[kd.embers(30, 31, (255, 210, 140), 40, 0.6, (1, 3))], grade_kind=None, vig=False))
-    s.append(Scene(at("देवराज इंद्र"), at("उन्होंने वो"), kd.BG_framed(f"{A}/38509.jpg", (0.5, 0.48, 0.80), (0.5, 0.42, 0.58)),
-                   caps=[(at("देवराज इंद्र"), "DEVRAJ INDRA", "KO DI DIVYA MAALA", GOLD, at("फूलों की")),
-                         (at("इंद्र ऐरावत"), "INDRA,", "AIRAVAT PAR", GOLD, at("ऐरावत"))], grade_kind=None, vig=False))
-    s.append(Scene(at("उन्होंने वो"), at("दुर्वासा क्रोधित"), kd.BG_framed(f"{R3}/mala.png", (0.5, 0.40, 0.55), (0.5, 0.75, 0.75)),
-                   caps=[(at("उन्होंने वो"), "MAALA HAATHI KE", "SIR PAR RAKH DI", GOLD, at("सिर पर")),
-                         (at("और हाथी"), "HAATHI NE", "ZAMEEN PAR PHENK DI", RED, at("ज़मीन"))],
-                   shake=(at("ज़मीन"), 0.5), grade_kind=None, vig=False))
-    s.append(Scene(at("दुर्वासा क्रोधित"), at("और स्वर्ग"), kd.BG_framed(f"{R3}/mala_fallen.png", (0.5, 0.52, 1.0), (0.5, 0.56, 0.78)),
-                   caps=[(at("दुर्वासा क्रोधित"), "DURVASA KA", "SHRAAP", RED, at("बोले")),
-                         (at("जैसे ये"), "JAISE MAALA GIRI,", "VAISE VAIBHAV GIREGA", RED, at("वैभव"))],
-                   flash=(at("दुर्वासा क्रोधित"), 0.3, (200, 30, 20)), grade_kind=None, vig=False))
-    s.append(Scene(at("और स्वर्ग"), at("इसी के बाद"), kd.BG_framed(f"{A}/849502.jpg", (0.48, 0.45, 0.62), (0.48, 0.38, 0.42)),
-                   caps=[(at("और स्वर्ग"), "SWARG SE", "SHRI CHALI GAYIN", GOLD, at("श्री चली")),
-                         (at("तीनों लोक"), "TEENON LOK", "PHEEKE PAD GAYE", CREAM, at("फीके"))],
-                   grade_kind=None, vig=False))
-    s.append(Scene(at("इसी के बाद"), at("पर अब"), kd.BG_framed(f"{A}/38601.jpg", (0.5, 0.48, 0.85), (0.5, 0.35, 0.55)),
-                   caps=[(at("इसी के बाद"), "PHIR SAMUDRA MANTHAN,", "LAKSHMI PRAKAT HUIN", GOLD, at("लक्ष्मी जी फिर"))], grade_kind=None, vig=False))
-    s.append(Scene(at("पर अब"), at("भागवत"), kd.BG_framed(f"{A}/38542.jpg", (0.5, 0.45, 0.85), (0.5, 0.38, 0.6)), fx=[window_tint(90)], over=[kd.big_text(at("किसे चुनेंगी"), "?", 620, 520, GOLD)],
-                   caps=[(at("पर अब"), "AB SAWAAL:", "LAKSHMI KISE CHUNENGI?", GOLD, at("किसे चुनेंगी"))], grade_kind=None, vig=False))
-    s.append(Scene(at("भागवत"), at("और फिर उन्होंने"), kd.BG_framed(f"{A}/659913.jpg", (0.55, 0.5, 0.40), (0.6, 0.5, 0.30)), fx=[window_tint(110)],
-                   over=[kd.chips_at([(at("भागवत") + 0.3, "BHAGAVATA PURANA 8.8", "c", 1400, REF),
-                                      (at("किसी में तप"), "TAP THA", 120, 820, {"size": 56}),
-                                      (at("पर क्रोध"), "PAR KRODH NAHI JEETA", 300, 950, {"size": 56, "fg": RED, "border": RED}),
-                                      (at("किसी में ज्ञान"), "GYAAN THA", 120, 1150, {"size": 56}),
-                                      (at("पर मोह"), "PAR MOH NAHI CHHOOTA", 300, 1280, {"size": 56, "fg": RED, "border": RED})])],
-                   caps=[(at("भागवत"), "BHAGAVAT PURAN:", "HAR DEV, HAR RISHI KO DEKHA", GOLD, at("हर देव"))], grade_kind=None, vig=False))
-    s.append(Scene(at("और फिर उन्होंने"), at("ये कहानी"), kd.BG_framed(f"{A}/38571.jpg", (0.5, 0.48, 0.80), (0.55, 0.40, 0.55)),
-                   caps=[(at("और फिर उन्होंने"), "LAKSHMI NE CHUNA:", "VISHNU", GOLD, at("विष्णु को")),
-                         (at("जिन्हें"), "JINHE LAKSHMI SE", "KUCH NAHI CHAHIYE THA", GOLD, at("कुछ भी"))],
-                   fx=[kd.light_glow(0.55, 0.42, 380, (255, 210, 140), 0.35, 0.1)], grade_kind=None, vig=False))
-    s.append(Scene(at("ये कहानी"), at("कल चौथा"), kd.BG_framed(f"{A}/849502.jpg", (0.50, 0.75, 0.50), (0.50, 0.70, 0.40)),
-                   caps=[(at("ये कहानी"), "LAKSHMI AHANKAAR", "KE GHAR MEIN NAHI TIKTIN", RED, at("अहंकार")),
-                         (at("वो वहाँ"), "WAHAN RAHTI HAIN,", "JAHAN SAMMAAN HAI", GOLD, at("जहाँ सम्मान"))],
-                   fx=[kd.flicker(0.05)], grade_kind=None, vig=False))
-    s.append(Scene(at("कल चौथा"), END, kd.BG_paper_plate(), fx=[kdextra.five_diyas(at("कल चौथा"), 3, y=820, x0=92, step=172, size=118), kd.embers(40, 33, (255, 180, 90), 60, 0.6)],
-                   over=[kd.chips_at([(at("फ़ॉलो"), "FOLLOW · 5 DIN · 5 DIYE", "c", 1360, {"size": 50})])],
-                   caps=[(at("कल चौथा"), "KAL: DIN 4", "GOVARDHAN", GOLD, at("गोवर्धन"))], grade_kind=None, vig=False))
-    for sc in s:
-        sc.over.append(credit_footer)
-    TR = {at("विष्णु पुराण"): "push", at("उन्होंने वो"): "zoom", at("दुर्वासा क्रोधित"): "flash", at("इसी के बाद"): "push", at("पर अब"): "zoom", at("भागवत"): "push", at("और फिर उन्होंने"): "zoom", at("कल चौथा"): "push"}
-    for sc in s:
-        sc.trans = TR.get(sc.t0, "cut")
-    return kdv2.expand(s)
+    """Keyword shot list in the manuscript-frame look: each spoken name/thing gets its own picture."""
+    F = kd.FRAME
+    P = lambda i, wf=0.7, mv="push", focus=None: kdv2.BG_auto(f"{A}/{i}.jpg", wf, mv, focus, window=F)
+    G = lambda wf, mv, focus: kdv2.BG_auto(f"{KD}/art/other/garlands_flickr.jpg", wf, mv, focus, window=F)
+    def cap(t, l1, l2=None, t2=None):
+        return [(t, l1, l2, GOLD, t2)]
+    S = [
+        (0.0, P(78259, 0.62, "push", (0.5, 0.40)), dict(caps=cap(0.0, "LAKSHMI JI NE", "SWARG CHHOD DIYA THA", 1.3))),
+        (at("जानते हैं"), P(74979, 0.42, "left", (0.75, 0.38)), dict(caps=cap(at("जानते हैं"), "JAANTE HAIN", "KYUN?", at("क्यों")))),
+        (at("आज बड़ी"), P(849494, 0.70, "rise", (0.5, 0.42)), dict(caps=cap(at("आज बड़ी"), "AAJ BADI DIWALI"), trans="push")),
+        (at("पाँच दिये"), kd.BG_paper_plate(), dict(fx=[kdextra.five_diyas(at("पाँच दिये"), 3, y=820, x0=92, step=172, size=118)],
+                                                  caps=cap(at("पाँच दिये"), "5 DIN · 5 DIYE ·", "AAJ TEESRA", at("आज तीसरा")))),
+        (at("लक्ष्मी पूजा"), P(38518, 0.62, "push", (0.45, 0.42)), dict(caps=cap(at("लक्ष्मी पूजा"), "TEESRA DIYA:", "LAKSHMI PUJA", at("लक्ष्मी पूजा")), trans="zoom")),
+        (at("विष्णु पुराण"), P(38515, 0.70, "rise"), dict(caps=cap(at("विष्णु पुराण"), "VISHNU PURAN 1.9"), trans="push")),
+        (at("ऋषि दुर्वासा"), G(0.60, "left", (0.30, 0.50)), dict(caps=cap(at("ऋषि दुर्वासा"), "RISHI DURVASA KI", "DIVYA MAALA", at("ऋषि दुर्वासा") + 0.6))),
+        (at("देवराज इंद्र"), P(38509, 0.75, "push", (0.5, 0.45)), dict(caps=cap(at("देवराज इंद्र"), "DEVRAJ INDRA"), trans="zoom")),
+        (at("फूलों की"), G(0.40, "orbit", (0.55, 0.45)), dict(caps=cap(at("फूलों की"), "PHOOLON KI DIVYA MAALA"))),
+        (at("इंद्र ऐरावत"), P(453145, 0.62, "right", (0.45, 0.70)), dict(caps=cap(at("इंद्र ऐरावत"), "AIRAVAT HAATHI"), trans="zoom")),
+        (at("उन्होंने वो"), P(453145, 0.36, "push", (0.40, 0.70)), dict(caps=cap(at("उन्होंने वो"), "MAALA HAATHI KE", "SIR PAR", at("सिर पर")))),
+        (at("और हाथी"), G(0.75, "fall", (0.65, 0.55)), dict(caps=cap(at("और हाथी"), "HAATHI NE", "ZAMEEN PAR PHENK DI", at("ज़मीन")), shake=(at("ज़मीन"), 0.6), flash=(at("ज़मीन"), 0.2, (255, 240, 220)))),
+        (at("दुर्वासा क्रोधित"), kd.BG_paper_plate(), dict(over=[kd.big_text(at("दुर्वासा क्रोधित"), "DURVASA", 700, 150, (255, 214, 140)),
+                                                                kd.big_text(at("क्रोधित"), "KA KRODH", 880, 150, (255, 120, 90))],
+                                                          flash=(at("दुर्वासा क्रोधित"), 0.3, (200, 30, 20)), trans="flash")),
+        (at("जैसे ये"), P(446753, 0.62, "fall", (0.5, 0.68)), dict(caps=cap(at("जैसे ये"), "JAISE MAALA GIRI,", "VAISE VAIBHAV GIREGA", at("वैभव")))),
+        (at("और स्वर्ग"), P(849502, 0.58, "left", (0.48, 0.40)), dict(caps=cap(at("और स्वर्ग"), "SWARG SE", "SHRI CHALI GAYIN", at("श्री चली")), trans="zoom")),
+        (at("तीनों लोक"), P(38251, 0.62, "pull", (0.5, 0.45)), dict(caps=cap(at("तीनों लोक"), "TEENON LOK", "PHEEKE PAD GAYE", at("फीके")))),
+        (at("इसी के बाद"), P(37989, 0.40, "rise", (0.40, 0.55)), dict(caps=cap(at("इसी के बाद"), "SAMUDRA MANTHAN"), trans="push")),
+        (at("लक्ष्मी जी फिर"), P(38542, 0.70, "push", (0.5, 0.40)), dict(caps=cap(at("लक्ष्मी जी फिर"), "LAKSHMI PHIR", "PRAKAT HUIN", at("प्रकट")), trans="zoom")),
+        (at("पर अब"), P(38601, 0.70, "pull", (0.5, 0.35)), dict(caps=cap(at("पर अब"), "LAKSHMI", "KISE CHUNENGI?", at("किसे चुनेंगी")))),
+        (at("भागवत"), P(659913, 0.45, "left", (0.62, 0.50)), dict(caps=cap(at("भागवत"), "BHAGAVAT PURAN 8.8:", "HAR DEV...", at("हर देव")), trans="push")),
+        (at("हर ऋषि"), P(37955, 0.32, "right", (0.62, 0.78)), dict(caps=cap(at("हर ऋषि"), "...HAR RISHI KO DEKHA"))),
+        (at("किसी में तप"), P(37956, 0.30, "push", (0.62, 0.45)), dict(caps=cap(at("किसी में तप"), "TAP THA...", "PAR KRODH NAHI JEETA", at("पर क्रोध")), flash=(at("पर क्रोध"), 0.2, (200, 40, 30)))),
+        (at("किसी में ज्ञान"), P(37955, 0.30, "left", (0.45, 0.72)), dict(caps=cap(at("किसी में ज्ञान"), "GYAAN THA...", "PAR MOH NAHI CHHOOTA", at("पर मोह")))),
+        (at("और फिर उन्होंने"), P(38571, 0.70, "push", (0.55, 0.42)), dict(caps=cap(at("और फिर उन्होंने"), "LAKSHMI NE CHUNA:", "VISHNU", at("विष्णु को")), fx=[kd.light_glow(0.5, 0.4, 380, (255, 210, 140), 0.3, 0.1)], trans="zoom")),
+        (at("जिन्हें"), P(38120, 0.62, "rise", (0.5, 0.42)), dict(caps=cap(at("जिन्हें"), "JINHE LAKSHMI SE", "KUCH NAHI CHAHIYE THA", at("कुछ भी")))),
+        (at("ये कहानी"), P(453313, 0.70, "pull", (0.5, 0.55)), dict(caps=cap(at("ये कहानी"), "AHANKAAR KE GHAR MEIN", "LAKSHMI NAHI TIKTIN", at("अहंकार")), trans="push")),
+        (at("वो वहाँ"), P(688470, 0.42, "push", (0.30, 0.55)), dict(caps=cap(at("वो वहाँ"), "WAHAN RAHTI HAIN,", "JAHAN SAMMAAN HAI", at("जहाँ सम्मान")), trans="zoom")),
+        (at("कल चौथा"), P(37968, 0.62, "rise", (0.48, 0.45)), dict(caps=cap(at("कल चौथा"), "KAL: DIN 4", "GOVARDHAN", at("गोवर्धन")), trans="push")),
+        (at("फ़ॉलो"), kd.BG_paper_plate(), dict(fx=[kdextra.five_diyas(at("फ़ॉलो"), 3, y=760, x0=92, step=172, size=118)],
+                                              over=[kd.chips_at([(at("फ़ॉलो") + 0.2, "FOLLOW · 5 DIN · 5 DIYE", "c", 1200, {"size": 46})])],
+                                              caps=cap(at("फ़ॉलो"), "PAANCHON DIYE", "SAATH JALAYENGE", at("साथ")))),
+    ]
+    out = kdv2.keyword_shots(S, END)
+    for sc in out:
+        sc.grade_kind, sc.vig = None, False
+        sc.over = list(sc.over) + [credit_footer]
+    return out
 
 
 def audio():

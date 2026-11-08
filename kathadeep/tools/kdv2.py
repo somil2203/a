@@ -184,3 +184,28 @@ def expand(scenes, cut_extra=None):
             n.trans = getattr(sc, "trans", None) if j == 0 else "cut"
             out.append(n)
     return out
+
+
+def BG_auto(path, wf=0.75, move="push", focus=None, window=None):
+    """One image, one shot: crop centred on the subject (or `focus`=(cx,cy)), gentle zoom with parallax."""
+    rgb, _ = load_pair(path)
+    sw, sh = rgb.shape[1], rgb.shape[0]
+    asp = ((window[2] - window[0]) / (window[3] - window[1])) if window else W / H
+    if focus is None:
+        focus = subject_point(path, (0, 0, sw, sh))
+    a = (focus[0], focus[1], wf)
+    b = (focus[0], focus[1], wf * 0.86)
+    return BG_para(path, a, b, move, window=window)
+
+
+def keyword_shots(shots, t_end):
+    """shots: [(t0, bgfunc, dict(caps=..., fx=..., over=..., trans=..., grade=..., shake=..., flash=..., credit=...))].
+    Each shot runs until the next one starts. One image per spoken keyword."""
+    out = []
+    for i, (t0, bg, kw) in enumerate(shots):
+        t1 = shots[i + 1][0] if i + 1 < len(shots) else t_end
+        sc = Scene(t0, t1, bg, kw.get("caps", ()), kw.get("fx", ()), kw.get("over", ()), kw.get("credit"),
+                   kw.get("grade", "warm"), kw.get("shake"), kw.get("flash"), kw.get("vig", True))
+        sc.trans = kw.get("trans", "cut")
+        out.append(sc)
+    return out

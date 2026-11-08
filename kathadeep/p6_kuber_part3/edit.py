@@ -42,64 +42,57 @@ def BG_sky(top=(126, 178, 230), low=(250, 214, 170)):
 
 
 def scenes():
-    s = []
-    s.append(Scene(0, at("कल रावण"), kd.BG_kb(f"{R3}/trees.png", (0.5, 0.40, 0.90), (0.5, 0.34, 0.70)),
-                   caps=[(0.0, "KUBER KE DO BETE", "DEVTAON JAISE AMEER", GOLD, 1.6),
-                         (at("और फिर एक दिन"), "AUR PHIR EK DIN:", "DONO PED BAN GAYE", RED, at("दोनों पेड़"))],
-                   grade_kind="warm", flash=(0, 0.4, (0, 0, 0))))
-    s.append(Scene(at("कल रावण"), at("भागवत"), BG_sky(),
-                   over=[kd.chips_at([(at("कल रावण") + 0.2, "PART 2: NALAKUBAR KA SHRAAP → RAVAN", "c", 820, {"size": 44})])],
-                   caps=[(at("कल रावण"), "YAAD HAI", "NALAKUBAR?", GOLD, at("नलकूबर याद")), (at("आज उसी"), "AAJ:", "USI KI KAHANI", GOLD, at("उसी की"))], grade_kind=None))
-    s.append(Scene(at("भागवत"), at("एक दिन कैलाश"), kd.BG_kb(f"{A}/38770.jpg", (0.5, 0.40, 0.85), (0.5, 0.33, 0.60)),
-                   caps=[(at("भागवत"), "BHAGAVAT PURAN:", None, None),
-                         (at("नलकूबर और"), "NALAKUBAR + MANIGRIV", "KUBER KE BETE", GOLD, at("कुबेर के बेटे")),
-                         (at("धन था"), "DHAN, TAAQAT...", "AUR NASHA", RED, at("उसका नशा"))],
-                   over=[kd.chips_at([(at("भागवत") + 0.3, "BHAGAVATA PURANA 10.10", "c", 300, REF), (at("नलकूबर और"), "KUBER (DHANADA) · PITA", "c", 400, {"size": 34})])],
-                   credit=MET, grade_kind="warm"))
-    s.append(Scene(at("एक दिन कैलाश"), at("तभी वहाँ"), BG_sky((70, 140, 170), (190, 225, 230)),
-                   fx=[kd.light_glow(0.5, 0.75, 420, (120, 200, 255), 0.45, 0.25), kd.embers(60, 41, (150, 210, 255), 50, 0.6, (1, 4)), kdextra.two_princes(at("नशे में धुत"), y=820, h=300, color=(20, 30, 50), glow=(120, 190, 255))],
-                   caps=[(at("एक दिन कैलाश"), "KAILASH KE PAAS,", "NADI MEIN", GOLD, at("नदी में")),
-                         (at("नशे में धुत"), "NASHE MEIN DHUT", "DONO BHAI", RED, at("दोनों भाई"))], grade_kind=None))
-    s.append(Scene(at("तभी वहाँ"), at("और श्राप"), kd.BG_kb(f"{A}/78252.jpg", (0.82, 0.42, 0.36), (0.84, 0.40, 0.26)),
-                   caps=[(at("तभी वहाँ"), "TABHI AAYE:", "DEVARSHI NARAD", GOLD, at("देवर्षि नारद")),
-                         (at("स्त्रियों ने"), "STRIYON NE VASTRA PEHNE...", "PAR UNHE HOSH NAHI", RED, at("पर कुबेर")),
-                         (at("नारद ने देखा"), "DHAN KE AHANKAAR NE", "ANDHA KAR DIYA", RED, at("अंधा"))],
-                   credit=MET, grade_kind="warm"))
-    s.append(Scene(at("और श्राप"), at("दोनों गोकुल"), BG_sky(), fx=[kd.light_glow(0.5, 0.55, 380, (255, 190, 110), 0.5, 0.2)],
-                   over=[kd.big_text(at("जाओ, पेड़"), "PED BAN JAO", 780, 170, RED),
-                         kd.chips_at([(at("पर साथ में"), "KRIPA: BHAGWAN KHUD MUKT KARENGE", "c", 1000, {"size": 44})])],
-                   caps=[(at("और श्राप"), "NARAD KA", "SHRAAP", RED, at("जाओ, पेड़"))], shake=(at("जाओ, पेड़"), 0.5), grade_kind=None))
-    s.append(Scene(at("दोनों गोकुल"), at("फिर एक दिन,"), kd.BG_kb(f"{R3}/trees.png", (0.5, 0.55, 1.0), (0.5, 0.62, 0.82)),
-                   caps=[(at("दोनों गोकुल"), "GOKUL, NAND BABA", "KA AANGAN", GOLD, at("आँगन")),
-                         (at("अर्जुन के"), "ARJUN KE", "DO PED", GOLD, at("दो पेड़"))], grade_kind="warm"))
-    s.append(Scene(at("फिर एक दिन,"), at("कान्हा ओखली"), kd.BG_kb(f"{A}/849507.jpg", (0.50, 0.42, 0.70), (0.40, 0.46, 0.46)),
-                   caps=[(at("फिर एक दिन,"), "MAA YASHODA NE", "NATKHAT KANHA KO", GOLD, at("नटखट")),
-                         (at("ओखली से"), "OKHLI SE", "BAANDH DIYA", GOLD, at("बाँध"))], credit=MET, grade_kind="warm"))
-    s.append(Scene(at("कान्हा ओखली"), at("ओखली फँसी"), kd.BG_kb(f"{R3}/trees.png", (0.5, 0.70, 0.62), (0.5, 0.74, 0.46)),
-                   caps=[(at("कान्हा ओखली"), "OKHLI GHASEET'TE KANHA", "DONO PEDON KE BEECH SE", GOLD, at("बीच से"))], grade_kind="warm"))
-    s.append(Scene(at("ओखली फँसी"), at("पेड़ों से"), kd.BG_kb(f"{R3}/trees_fallen.png", (0.5, 0.62, 0.80), (0.5, 0.64, 0.62)),
-                   caps=[(at("ओखली फँसी"), "OKHLI PHANSI...", "PED JAD SE UKHAD GAYE", RED, at("जड़ से"))],
-                   shake=(at("जड़ से"), 0.8), flash=(at("जड़ से"), 0.25, (255, 230, 190)), grade_kind="warm"))
-    s.append(Scene(at("पेड़ों से"), at("इसीलिए"), BG_sky((60, 80, 150), (240, 190, 140)), fx=[kdextra.two_princes(at("पेड़ों से") + 0.2, y=880, h=330)],
-                   caps=[(at("पेड़ों से"), "PRAKAT HUE:", "NALAKUBAR + MANIGRIV", GOLD, at("प्रकट हुए") + 0.9),
-                         (at("हाथ जोड़कर"), "HAATH JODKAR", "KRISHNA KI STUTI", GOLD, at("स्तुति"))], grade_kind=None))
-    s.append(Scene(at("इसीलिए"), at("आज लक्ष्मी"), kd.BG_kb(f"{A}/39331.jpg", (0.5, 0.40, 0.80), (0.55, 0.35, 0.55)),
-                   caps=[(at("इसीलिए"), "ISILIYE KRISHNA:", "DAMODAR", GOLD, at("दामोदर")),
-                         (at("जिनके उदर"), "DAAM (RASSI) +", "UDAR (PET)", GOLD, at("रस्सी"))],
-                   over=[kd.chips_at([(at("इसीलिए") + 0.3, "BHAGAVATA PURANA 10.9", "c", 300, REF)])], credit=MET, grade_kind="warm"))
-    s.append(Scene(at("आज लक्ष्मी"), at("कुबेर की कहानी"), kd.BG_kb(f"{A}/39211.jpg", (0.45, 0.45, 0.85), (0.42, 0.32, 0.55)),
-                   caps=[(at("आज लक्ष्मी"), "AAJ LAKSHMI-KUBER PUJA", None, None),
-                         (at("कुबेर का वरदान"), "KUBER KA VARDAAN:", "DHAN", GOLD, at("है धन")),
-                         (at("और उनके बेटों"), "BETON KI SEEKH:", "DHAN + VINAMRATA", GOLD, at("विनम्रता"))], credit=MET, grade_kind="warm"))
-    s.append(Scene(at("कुबेर की कहानी"), END, BG_sky(), fx=[kd.embers(50, 43, (255, 190, 110), 70, 0.7)],
-                   over=[kd.chips_at([(at("कुबेर की कहानी") + 0.3, "PART 1 · LANKA   PART 2 · SHRAAP   PART 3 · MUKTI", "c", 900, {"size": 36}),
-                                      (at("कमेंट"), "COMMENT KARO: AGLI KAHANI?", "c", 1080, {"size": 50}),
-                                      (at("कमेंट") + 0.3, "FOLLOW · KATHA DEEP", "c", 1230, {"size": 44})])],
-                   caps=[(at("कुबेर की कहानी"), "KUBER KI KAHANI:", "POORI", GOLD, at("पूरी होती"))], grade_kind=None))
-    TR = {at("कल रावण"): "whip", at("एक दिन कैलाश"): "whip", at("तभी वहाँ"): "zoom", at("और श्राप"): "zoom", at("दोनों गोकुल"): "whip", at("ओखली फँसी"): "flash", at("पेड़ों से"): "flash", at("इसीलिए"): "whip", at("कुबेर की कहानी"): "zoom"}
-    for sc in s:
-        sc.trans = TR.get(sc.t0, "cut")
-    return kdv2.expand(s)
+    """Keyword shot list: whatever word is spoken, its own picture is on screen (one image per keyword)."""
+    P = lambda i, wf=0.72, mv="push", focus=None: kdv2.BG_auto(f"{A}/{i}.jpg", wf, mv, focus)
+    R = lambda n, a, b, mv="push": kdv2.BG_para(f"{R3}/{n}.png", a, b, mv)
+    sil = lambda col=(14, 8, 6), glow=(255, 214, 140), y=880: kdextra.two_princes(0, y=y, h=330, color=col, glow=glow)
+    def cap(t, l1, l2=None, c=GOLD, t2=None):
+        return [(t, l1, l2, c, t2)]
+    S = [
+        (0.0, P(38387, 0.85, "push"), dict(caps=cap(0, "KUBER KE DO BETE"), credit=MET, flash=(0, 0.3, (0, 0, 0)))),
+        (at("देवताओं"), P(446749, 0.62, "orbit"), dict(caps=cap(at("देवताओं"), "DEVTAON JAISE AMEER"), credit=MET)),
+        (at("और फिर एक दिन"), kdv2.BG_para(f"{A}/37939.jpg", (0.62, 0.55, 0.42), (0.62, 0.52, 0.34), "rise"), dict(caps=cap(at("और फिर एक दिन"), "AUR PHIR EK DIN: DONO PED BAN GAYE"), credit=MET, trans="zoom")),
+        (at("कल रावण"), P(74475, 0.40, "left"), dict(caps=cap(at("कल रावण"), "RAVAN KO SHRAAP DENE WALA"), credit=MET, trans="whip")),
+        (at("नलकूबर याद"), P(38468, 0.80, "push"), dict(caps=cap(at("नलकूबर याद"), "NALAKUBAR (YAKSH) YAAD HAI?"), credit=MET)),
+        (at("आज उसी"), P(72618, 0.30, "left", focus=(0.30, 0.55)), dict(caps=cap(at("आज उसी"), "AAJ: USI KI KAHANI"), credit=MET)),
+        (at("भागवत"), P(37855, 0.55, "right"), dict(caps=cap(at("भागवत"), "BHAGAVAT PURAN 10.10"), credit=MET, trans="whip")),
+        (at("नलकूबर और"), P(38293, 0.80, "push"), dict(caps=cap(at("नलकूबर और"), "NALAKUBAR + MANIGRIV · KUBER KE BETE"), credit=MET)),
+        (at("धन था"), P(39405, 0.80, "push"), dict(caps=cap(at("धन था"), "DHAN"), credit=MET, trans="zoom")),
+        (at("ताक़त थी"), P(38936, 0.80, "rise"), dict(caps=cap(at("ताक़त थी"), "TAAQAT"), credit=MET)),
+        (at("उसका नशा"), P(56203, 0.42, "orbit", focus=(0.32, 0.52)), dict(caps=cap(at("उसका नशा"), "AUR NASHA", c=RED), credit=MET, trans="zoom")),
+        (at("एक दिन कैलाश"), P(849508, 0.70, "fall"), dict(caps=cap(at("एक दिन कैलाश"), "KAILASH KE PAAS"), credit=MET, trans="whip")),
+        (at("नदी में"), P(765654, 0.32, "left", focus=(0.22, 0.45)), dict(caps=cap(at("नदी में"), "NADI MEIN"), credit=MET)),
+        (at("नशे में धुत"), P(54183, 0.45, "right"), dict(caps=cap(at("नशे में धुत"), "NASHE MEIN DHUT", c=RED), credit=MET)),
+        (at("स्त्रियों के साथ"), P(454054, 0.45, "right"), dict(caps=cap(at("स्त्रियों के साथ"), "JAL-KREEDA"), credit=MET)),
+        (at("तभी वहाँ"), kdv2.BG_para(f"{A}/78252.jpg", (0.82, 0.42, 0.36), (0.84, 0.40, 0.27), "push"), dict(caps=cap(at("तभी वहाँ"), "DEVARSHI NARAD"), credit=MET, trans="zoom")),
+        (at("स्त्रियों ने"), P(73148, 0.70, "fall"), dict(caps=cap(at("स्त्रियों ने"), "STRIYON NE VASTRA PEHNE"), credit=MET)),
+        (at("पर कुबेर"), P(38475, 0.55, "push"), dict(caps=cap(at("पर कुबेर"), "PAR UNHE HOSH NAHI", c=RED), credit=MET)),
+        (at("नारद ने देखा"), P(446266, 0.55, "left"), dict(caps=cap(at("धन के"), "DHAN KA AHANKAAR = ANDHAPAN", c=RED), credit=MET, trans="zoom")),
+        (at("और श्राप"), P(765654, 0.32, "rise", focus=(0.78, 0.40)), dict(caps=cap(at("और श्राप"), "NARAD KA SHRAAP:", "PED BAN JAO", RED, at("जाओ, पेड़")), credit=MET, shake=(at("जाओ, पेड़"), 0.5), trans="flash")),
+        (at("पर साथ में"), P(38517, 0.60, "rise"), dict(caps=cap(at("पर साथ में"), "PAR SAATH MEIN KRIPA"), credit=MET)),
+        (at("एक दिन स्वयं"), P(72719, 0.55, "push"), dict(caps=cap(at("एक दिन स्वयं"), "BHAGWAN KHUD MUKT KARENGE"), credit=MET, trans="zoom")),
+        (at("दोनों गोकुल"), P(37848, 0.38, "left"), dict(caps=cap(at("दोनों गोकुल"), "GOKUL · NAND BABA KA AANGAN"), credit=MET, trans="whip")),
+        (at("अर्जुन के"), kdv2.BG_para(f"{A}/37939.jpg", (0.66, 0.62, 0.36), (0.66, 0.58, 0.28), "push"), dict(caps=cap(at("अर्जुन के"), "ARJUN KE DO PED"), credit=MET)),
+        (at("फिर एक दिन,"), P(39258, 0.70, "fall"), dict(caps=cap(at("फिर एक दिन,"), "MAA YASHODA"), credit=MET, trans="whip")),
+        (at("नटखट"), kdv2.BG_para(f"{A}/849507.jpg", (0.36, 0.48, 0.44), (0.34, 0.50, 0.34), "push"), dict(caps=cap(at("नटखट"), "NATKHAT KANHA"), credit=MET)),
+        (at("ओखली से"), kdv2.BG_para(f"{A}/37939.jpg", (0.38, 0.80, 0.30), (0.40, 0.80, 0.22), "push"), dict(caps=cap(at("ओखली से"), "OKHLI SE BAANDH DIYA"), credit=MET, trans="zoom")),
+        (at("कान्हा ओखली"), kdv2.BG_para(f"{A}/37939.jpg", (0.55, 0.78, 0.40), (0.60, 0.78, 0.32), "left"), dict(caps=cap(at("कान्हा ओखली"), "DONO PEDON KE BEECH SE"), credit=MET)),
+        
+        (at("ओखली फँसी"), kdv2.BG_para(f"{A}/37939.jpg", (0.68, 0.55, 0.30), (0.68, 0.60, 0.48), "pull"), dict(caps=cap(at("ओखली फँसी"), "OKHLI PHANSI...", "PED JAD SE UKHAD GAYE", RED, at("जड़ से")), credit=MET, shake=(at("जड़ से"), 0.9), flash=(at("जड़ से"), 0.25, (255, 240, 210)), trans="zoom")),
+        (at("पेड़ों से"), kdv2.BG_para(f"{A}/37939.jpg", (0.62, 0.84, 0.26), (0.62, 0.84, 0.19), "push"), dict(caps=cap(at("पेड़ों से"), "PRAKAT HUE: NALAKUBAR + MANIGRIV"), fx=[kd.light_glow(0.5, 0.55, 380, (255, 230, 170), 0.35, 0.2)], credit=MET, trans="flash")),
+        (at("हाथ जोड़कर"), P(37926, 0.55, "rise"), dict(caps=cap(at("हाथ जोड़कर"), "HAATH JODKAR STUTI"), credit=MET)),
+        (at("इसीलिए"), P(39331, 0.70, "push"), dict(caps=cap(at("इसीलिए"), "ISILIYE KRISHNA: DAMODAR"), credit=MET, trans="whip")),
+        (at("जिनके उदर"), kd.BG_plate("gold"), dict(over=[kd.deva_card(at("जिनके उदर"), "दाम (रस्सी) + उदर (पेट)", None, "BHAGAVATA PURANA 10.9", y=820, size=92, color=(255, 226, 160))], grade=None)),
+        (at("आज लक्ष्मी"), P(78264, 0.62, "push"), dict(caps=cap(at("आज लक्ष्मी"), "AAJ LAKSHMI-KUBER PUJA"), credit=MET, trans="zoom")),
+        (at("कुबेर का वरदान"), P(39006, 0.80, "orbit"), dict(caps=cap(at("कुबेर का वरदान"), "KUBER KA VARDAAN"), credit=MET)),
+        (at("है धन"), P(39406, 0.80, "push"), dict(caps=cap(at("है धन"), "DHAN"), credit=MET, trans="zoom")),
+        (at("और उनके बेटों"), P(39360, 0.75, "rise"), dict(caps=cap(at("और उनके बेटों"), "BETON KI SEEKH:", "DHAN + VINAMRATA", GOLD, at("विनम्रता")), credit=MET)),
+        (at("कुबेर की कहानी"), BG_sky(), dict(over=[kd.chips_at([(at("कुबेर की कहानी") + 0.2, "PART 1 · LANKA   PART 2 · SHRAAP   PART 3 · MUKTI", "c", 820, {"size": 36})])],
+                                         caps=cap(at("कुबेर की कहानी"), "KUBER KI KAHANI: POORI"), grade=None, trans="whip")),
+        (at("अगली"), kd.BG_plate("red"), dict(fx=[kd.embers(50, 43, (255, 190, 110), 70, 0.7)],
+                                            over=[kd.chips_at([(at("अगली"), "COMMENT KARO: AGLI KAHANI?", "c", 900, {"size": 50}), (at("कमेंट"), "FOLLOW · KATHA DEEP", "c", 1060, {"size": 44})])], grade=None)),
+    ]
+    return kdv2.keyword_shots(S, END)
 
 
 def audio():
