@@ -488,5 +488,25 @@
   "creditLine": "Samuel Eilenberg Collection, Ex Coll.: Columbia University, Purchase, Rogers Fund, 1987",
   "objectURL": "https://www.metmuseum.org/art/collection/search/38509",
   "isPublicDomain": true
+ },
+ "849494": {
+  "objectID": 849494,
+  "title": "Goddess Kamalatmika",
+  "artistDisplayName": "The Hindu Art Studio",
+  "objectDate": "ca. 1880–85",
+  "culture": "West Bengal, Calcutta",
+  "creditLine": "Purchase, The Kipper Family Foundation Gift, 2021",
+  "objectURL": "https://www.metmuseum.org/art/collection/search/849494",
+  "isPublicDomain": true
+ },
+ "38542": {
+  "objectID": 38542,
+  "title": "Gaja Lakshmi, Goddess of Fortune",
+  "artistDisplayName": "",
+  "objectDate": "8th century",
+  "culture": "India (Kashmir)",
+  "creditLine": "Gift of Bette-Ann and William Spielman, 1991",
+  "objectURL": "https://www.metmuseum.org/art/collection/search/38542",
+  "isPublicDomain": true
  }
 }

@@ -26,8 +26,9 @@ def scenes():
     def add(sc, tr=None):
         sc.trans = tr
         s.append(sc)
-    add(Scene(0, at("और फिर भी"), kd.BG_kb(G(0), (0.5, 0.42, 0.95), (0.5, 0.36, 0.80)),
-              caps=[(0.0, "AAJ AMAVASYA HAI", None, None), (at("आसमान"), "AASMAAN MEIN", "CHAAND NAHI", CREAM, at("चाँद"))], grade_kind=None))
+    _open = kd.BG_kb(G(0), (0.5, 0.40, 1.0), (0.5, 0.42, 0.84))
+    add(Scene(0, at("और फिर भी"), (lambda lt, fr, fi: _open(lt, fr, fi)),
+              caps=[(0.0, "AAJ AMAVASYA HAI", None, None), (at("आसमान"), "AASMAAN MEIN", "CHAAND NAHI", CREAM, at("चाँद"))], grade_kind="moonless"))
     add(Scene(at("और फिर भी"), at("हज़ारों"), kd.BG_kb(G(6), (0.5, 0.55, 1.0), (0.5, 0.55, 0.85)),
               caps=[(at("और फिर भी"), "PHIR BHI AAJ:", "SAAL KI SABSE ROSHAN RAAT", GOLD, at("सबसे रोशन"))],
               fx=[kd.embers(70, 51, (255, 190, 100), 90, 0.8, (1, 4))], grade_kind="flame"), "flash")

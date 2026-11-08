@@ -19,6 +19,16 @@ kd.TRANS = "cut"; MET = "ART: THE MET · OPEN ACCESS (CC0)"
 REF = {"size": 30, "fg": CREAM, "border": (200, 160, 100)}
 
 
+def window_tint(alpha=150):
+    from PIL import Image, ImageDraw
+    def f(base, t, sc):
+        ov = Image.new("RGBA", base.size)
+        x0, y0, x1, y1 = kd.FRAME
+        ImageDraw.Draw(ov).rectangle((x0, y0, x1, y1), fill=(60, 12, 10, alpha))
+        base.alpha_composite(ov)
+    return f
+
+
 def credit_footer(base, t, sc):
     c = kd.text_img("ART: THE MET OPEN ACCESS (CC0) · 3D: KATHA DEEP", "monor", 20, (120, 80, 50), shadow=False)
     kd.paste_fade(base, c, (kd.W / 2 - c.width / 2, 1840), 0.9)
@@ -29,7 +39,7 @@ def scenes():
     s.append(Scene(0, at("आज बड़ी"), kd.BG_framed(f"{A}/78259.jpg", (0.50, 0.40, 0.62), (0.50, 0.34, 0.44)),
                    caps=[(0.0, "LAKSHMI JI NE", "SWARG CHHOD DIYA THA", RED, 1.3), (at("जानते हैं"), "JAANTE HAIN", "KYUN?", GOLD, at("क्यों"))],
                    grade_kind=None, vig=False, flash=(0, 0.4, (0, 0, 0))))
-    s.append(Scene(at("आज बड़ी"), at("विष्णु पुराण"), kd.BG_paper_plate(), fx=[kdextra.five_diyas(at("आज बड़ी") + 0.3, 3, y=820, x0=92, step=172, size=118)],
+    s.append(Scene(at("आज बड़ी"), at("विष्णु पुराण"), kd.BG_framed(f"{A}/849494.jpg", (0.5, 0.45, 0.8), (0.5, 0.40, 0.6)), fx=[window_tint(120), kdextra.five_diyas(at("आज बड़ी") + 0.3, 3, y=820, x0=92, step=172, size=118)],
                    caps=[(at("आज बड़ी"), "AAJ BADI DIWALI", None, None), (at("आज तीसरा"), "TEESRA DIYA:", "LAKSHMI PUJA", GOLD, at("लक्ष्मी पूजा"))], grade_kind=None, vig=False))
     s.append(Scene(at("विष्णु पुराण"), at("देवराज इंद्र"), kd.BG_framed(f"{R3}/mala.png", (0.5, 0.48, 1.0), (0.5, 0.50, 0.80)),
                    caps=[(at("विष्णु पुराण"), "VISHNU PURAN:", "RISHI DURVASA KI MAALA", GOLD, at("ऋषि दुर्वासा"))],
@@ -52,9 +62,9 @@ def scenes():
                    grade_kind=None, vig=False))
     s.append(Scene(at("इसी के बाद"), at("पर अब"), kd.BG_framed(f"{A}/38601.jpg", (0.5, 0.48, 0.85), (0.5, 0.35, 0.55)),
                    caps=[(at("इसी के बाद"), "PHIR SAMUDRA MANTHAN,", "LAKSHMI PRAKAT HUIN", GOLD, at("लक्ष्मी जी फिर"))], grade_kind=None, vig=False))
-    s.append(Scene(at("पर अब"), at("भागवत"), kd.BG_paper_plate(), over=[kd.big_text(at("किसे चुनेंगी"), "?", 620, 520, GOLD)],
+    s.append(Scene(at("पर अब"), at("भागवत"), kd.BG_framed(f"{A}/38542.jpg", (0.5, 0.45, 0.85), (0.5, 0.38, 0.6)), fx=[window_tint(90)], over=[kd.big_text(at("किसे चुनेंगी"), "?", 620, 520, GOLD)],
                    caps=[(at("पर अब"), "AB SAWAAL:", "LAKSHMI KISE CHUNENGI?", GOLD, at("किसे चुनेंगी"))], grade_kind=None, vig=False))
-    s.append(Scene(at("भागवत"), at("और फिर उन्होंने"), kd.BG_paper_plate(),
+    s.append(Scene(at("भागवत"), at("और फिर उन्होंने"), kd.BG_framed(f"{A}/659913.jpg", (0.55, 0.5, 0.40), (0.6, 0.5, 0.30)), fx=[window_tint(110)],
                    over=[kd.chips_at([(at("भागवत") + 0.3, "BHAGAVATA PURANA 8.8", "c", 1400, REF),
                                       (at("किसी में तप"), "TAP THA", 120, 820, {"size": 56}),
                                       (at("पर क्रोध"), "PAR KRODH NAHI JEETA", 300, 950, {"size": 56, "fg": RED, "border": RED}),

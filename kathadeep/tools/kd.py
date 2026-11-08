@@ -178,6 +178,9 @@ def grade(im, kind):
         w = np.clip((lum - 0.55) / 0.4, 0, 1)
         a = a * (1 - w) + (a * np.array([1.0, 0.72, 0.38]) + np.array([0.05, 0.02, 0])) * w
         a = a * np.array([1.04, 0.96, 0.88])
+    elif kind == "moonless":  # lift deep shadows into a blue night so a dark render still reads
+        a = np.clip(a * 2.6, 0, 1) ** 0.62
+        a = a * np.array([0.62, 0.74, 1.0]) + np.array([0.01, 0.015, 0.04])
     elif kind == "dim":
         a = a * 0.55
     a = np.clip(a, 0, 1)
