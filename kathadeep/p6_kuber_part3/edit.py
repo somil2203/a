@@ -7,14 +7,14 @@ Rule: whoever the narration names is on screen (Kuber, Narad, Yashoda & Kanha, t
 import os, sys
 HERE = os.path.dirname(os.path.abspath(__file__)); KD = os.path.dirname(HERE)
 sys.path.insert(0, f"{KD}/tools")
-import kd, kdextra  # noqa: E401,E402
+import kd, kdextra, kdv2  # noqa: E401,E402
 from kd import CREAM, GOLD, RED, Scene  # noqa: E402
 
 A, R3 = f"{KD}/art/full", f"{KD}/renders3d"
 T = kd.Timing(HERE); at = T.at; END = T.end + 1.8
 TAG = "KUBER KI LANKA · PART 3"
 kd.CAP_MODE = "mono"
-kd.TRANS = "whip"
+kd.TRANS = "cut"
 kd.SUBS = T; MET = "ART: THE MET · OPEN ACCESS (CC0)"
 REF = {"size": 30, "fg": CREAM, "border": (200, 160, 100)}
 
@@ -72,12 +72,12 @@ def scenes():
     s.append(Scene(at("दोनों गोकुल"), at("फिर एक दिन,"), kd.BG_kb(f"{R3}/trees.png", (0.5, 0.55, 1.0), (0.5, 0.62, 0.82)),
                    caps=[(at("दोनों गोकुल"), "GOKUL, NAND BABA", "KA AANGAN", GOLD, at("आँगन")),
                          (at("अर्जुन के"), "ARJUN KE", "DO PED", GOLD, at("दो पेड़"))], grade_kind="warm"))
-    s.append(Scene(at("फिर एक दिन,"), at("कान्हा ओखली"), kd.BG_kb(f"{A}/849507.jpg", (0.50, 0.50, 0.70), (0.38, 0.62, 0.45)),
+    s.append(Scene(at("फिर एक दिन,"), at("कान्हा ओखली"), kd.BG_kb(f"{A}/849507.jpg", (0.50, 0.42, 0.70), (0.40, 0.46, 0.46)),
                    caps=[(at("फिर एक दिन,"), "MAA YASHODA NE", "NATKHAT KANHA KO", GOLD, at("नटखट")),
                          (at("ओखली से"), "OKHLI SE", "BAANDH DIYA", GOLD, at("बाँध"))], credit=MET, grade_kind="warm"))
-    s.append(Scene(at("कान्हा ओखली"), at("ओखली फँसी"), kd.BG_kb(f"{R3}/trees.png", (0.5, 0.72, 0.60), (0.5, 0.80, 0.42)),
+    s.append(Scene(at("कान्हा ओखली"), at("ओखली फँसी"), kd.BG_kb(f"{R3}/trees.png", (0.5, 0.70, 0.62), (0.5, 0.74, 0.46)),
                    caps=[(at("कान्हा ओखली"), "OKHLI GHASEET'TE KANHA", "DONO PEDON KE BEECH SE", GOLD, at("बीच से"))], grade_kind="warm"))
-    s.append(Scene(at("ओखली फँसी"), at("पेड़ों से"), kd.BG_kb(f"{R3}/trees_fallen.png", (0.5, 0.50, 1.0), (0.5, 0.50, 0.85)),
+    s.append(Scene(at("ओखली फँसी"), at("पेड़ों से"), kd.BG_kb(f"{R3}/trees_fallen.png", (0.5, 0.62, 0.80), (0.5, 0.64, 0.62)),
                    caps=[(at("ओखली फँसी"), "OKHLI PHANSI...", "PED JAD SE UKHAD GAYE", RED, at("जड़ से"))],
                    shake=(at("जड़ से"), 0.8), flash=(at("जड़ से"), 0.25, (255, 230, 190)), grade_kind="warm"))
     s.append(Scene(at("पेड़ों से"), at("इसीलिए"), BG_sky((60, 80, 150), (240, 190, 140)), fx=[kdextra.two_princes(at("पेड़ों से") + 0.2, y=880, h=330)],
@@ -96,7 +96,10 @@ def scenes():
                                       (at("कमेंट"), "COMMENT KARO: AGLI KAHANI?", "c", 1080, {"size": 50}),
                                       (at("कमेंट") + 0.3, "FOLLOW · KATHA DEEP", "c", 1230, {"size": 44})])],
                    caps=[(at("कुबेर की कहानी"), "KUBER KI KAHANI:", "POORI", GOLD, at("पूरी होती"))], grade_kind=None))
-    return s
+    TR = {at("कल रावण"): "whip", at("एक दिन कैलाश"): "whip", at("तभी वहाँ"): "zoom", at("और श्राप"): "zoom", at("दोनों गोकुल"): "whip", at("ओखली फँसी"): "flash", at("पेड़ों से"): "flash", at("इसीलिए"): "whip", at("कुबेर की कहानी"): "zoom"}
+    for sc in s:
+        sc.trans = TR.get(sc.t0, "cut")
+    return kdv2.expand(s)
 
 
 def audio():

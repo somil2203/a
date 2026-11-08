@@ -12,3 +12,6 @@ __pycache__/
 DOWNLOADS/
 PHONE/
 server.log
+depth/
+renders3d/*.log
+*/render.log

@@ -8,14 +8,14 @@ Rule: what the narration names is what the frame shows (Indra -> Indra; garland 
 import os, sys
 HERE = os.path.dirname(os.path.abspath(__file__)); KD = os.path.dirname(HERE)
 sys.path.insert(0, f"{KD}/tools")
-import kd, kdextra  # noqa: E401,E402
+import kd, kdextra, kdv2  # noqa: E401,E402
 from kd import CREAM, GOLD, RED, Scene  # noqa: E402
 
 A, R3 = f"{KD}/art/full", f"{KD}/renders3d"
 T = kd.Timing(HERE); at = T.at; END = T.end + 1.8
 TAG = "DEEPOTSAV · DIN 3/5"
 kd.CAP_MODE = "lower"
-kd.TRANS = "push"; MET = "ART: THE MET · OPEN ACCESS (CC0)"
+kd.TRANS = "cut"; MET = "ART: THE MET · OPEN ACCESS (CC0)"
 REF = {"size": 30, "fg": CREAM, "border": (200, 160, 100)}
 
 
@@ -74,7 +74,10 @@ def scenes():
                    caps=[(at("कल चौथा"), "KAL: DIN 4", "GOVARDHAN", GOLD, at("गोवर्धन"))], grade_kind=None, vig=False))
     for sc in s:
         sc.over.append(credit_footer)
-    return s
+    TR = {at("विष्णु पुराण"): "push", at("उन्होंने वो"): "zoom", at("दुर्वासा क्रोधित"): "flash", at("इसी के बाद"): "push", at("पर अब"): "zoom", at("भागवत"): "push", at("और फिर उन्होंने"): "zoom", at("कल चौथा"): "push"}
+    for sc in s:
+        sc.trans = TR.get(sc.t0, "cut")
+    return kdv2.expand(s)
 
 
 def audio():

@@ -458,6 +458,7 @@ def BG_kb(path, a, b, maxside=3200):
 
     def f(lt, fr, fi):
         return kb_frame(src, a, b, fr)
+    f.meta = {"path": path, "a": a, "b": b, "window": None}
     return f
 
 
@@ -596,6 +597,16 @@ TRANS = "fade"
 
 
 def transition(kind, a, b, k):
+    if kind == "zoom":            # punch-in: incoming frame lands from 1.22x with a brief light flash
+        s_ = 1.22 - 0.22 * eo(k)
+        w, h = int(W * s_), int(H * s_)
+        im = b.resize((w, h), Image.BILINEAR).crop(((w - W) // 2, (h - H) // 2, (w - W) // 2 + W, (h - H) // 2 + H))
+        fl = max(0.0, 0.45 * (1 - k * 3))
+        return Image.blend(im, Image.new("RGB", (W, H), (255, 244, 225)), fl) if fl > 0 else im
+    if kind == "flash":           # white flash peaking at the cut
+        src = a if k < 0.4 else b
+        fl = 1 - abs(k - 0.4) / 0.6 if k >= 0.4 else k / 0.4
+        return Image.blend(src, Image.new("RGB", (W, H), (255, 248, 236)), 0.85 * max(0, fl))
     if kind == "push":            # page slide: old slides left, new comes in from the right
         out = Image.new("RGB", (W, H))
         off = int(W * k)
@@ -617,21 +628,21 @@ def transition(kind, a, b, k):
     return Image.blend(a, b, k)
 
 
-def render(scenes, out, tag=None, xfade=0.24, t_end=None):
+def render(scenes, out, tag=None, xfade=0.24, t_end=None, t_start=0.0):
     t_end = t_end or scenes[-1].t1
     n = int(round(t_end * FPS))
     p = subprocess.Popen(["ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}", "-r", str(FPS),
                           "-i", "-", "-c:v", "libx264", "-preset", "medium", "-crf", "16", "-pix_fmt", "yuv420p", out],
                          stdin=subprocess.PIPE)
     si = 0
-    for fi in range(n):
+    for fi in range(int(t_start * FPS), n):
         t = fi / FPS
         while si < len(scenes) - 1 and t >= scenes[si + 1].t0:
             si += 1
         sc = scenes[si]
         im = sc.frame(t, fi, tag)
-        tr = getattr(sc, "trans", TRANS)
-        dur = {"fade": xfade, "push": 0.38, "whip": 0.30, "iris": 0.5}.get(tr, xfade)
+        tr = getattr(sc, "trans", None) or TRANS
+        dur = {"fade": xfade, "push": 0.38, "whip": 0.30, "iris": 0.5, "zoom": 0.24, "flash": 0.30}.get(tr, xfade)
         if si > 0 and t - sc.t0 < dur and tr != "cut":
             prev = scenes[si - 1].frame(t, fi, tag)
             k = ss((t - sc.t0) / dur)
@@ -778,6 +789,7 @@ def BG_framed(path, a, b, tone="ivory", maxside=3200):
         im.paste(win, (x0, y0))
         im.alpha_composite(frame_overlay())
         return im.convert("RGB")
+    f.meta = {"path": path, "a": a, "b": b, "window": FRAME}
     return f
 
 

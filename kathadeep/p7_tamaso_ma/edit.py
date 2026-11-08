@@ -4,14 +4,14 @@ three diyas on three steps lighting one per line of the mantra (new 3D)."""
 import os, sys
 HERE = os.path.dirname(os.path.abspath(__file__)); KD = os.path.dirname(HERE)
 sys.path.insert(0, f"{KD}/tools")
-import kd, kdextra  # noqa: E401,E402
+import kd, kdextra, kdv2  # noqa: E401,E402
 from kd import CREAM, GOLD, Scene  # noqa: E402
 
 A, R3 = f"{KD}/art/full", f"{KD}/renders3d"
 T = kd.Timing(HERE); at = T.at; END = T.end + 1.8
 TAG = "KATHA DEEP · DEEPAVALI"
 kd.CAP_MODE = "mono"
-kd.TRANS = "iris"; MET = "ART: THE MET · OPEN ACCESS (CC0)"
+kd.TRANS = "cut"; MET = "ART: THE MET · OPEN ACCESS (CC0)"
 
 
 def BG_black():
@@ -22,34 +22,38 @@ def BG_black():
 
 def scenes():
     s = []
-    s.append(Scene(0, at("और फिर भी"), kdextra.BG_amavasya(),
-                   caps=[(0.0, "AAJ AMAVASYA HAI", None, None), (at("आसमान"), "AASMAAN MEIN", "CHAAND NAHI", CREAM, at("चाँद"))], grade_kind=None))
-    s.append(Scene(at("और फिर भी"), at("हज़ारों"), kdextra.BG_amavasya(12),
-                   caps=[(at("और फिर भी"), "PHIR BHI AAJ:", "SAAL KI SABSE ROSHAN RAAT", GOLD, at("सबसे रोशन"))],
-                   fx=[kd.light_glow(0.5, 1.02, 620, (255, 160, 70), 1.0, 0.08), kd.embers(140, 51, (255, 190, 100), 120, 0.9, (1, 4))], grade_kind=None))
-    s.append(Scene(at("हज़ारों"), at("असतो मा"), kd.BG_kb(f"{A}/38758.jpg", (0.5, 0.55, 0.45), (0.5, 0.55, 0.36)),
-                   caps=[(at("हज़ारों"), "HAZAARON SAAL PURANA", "EK MANTRA", GOLD, at("एक मंत्र")),
-                         (at("बृहदारण्यक"), "BRIHADARANYAKA", "UPANISHAD", GOLD, at("उपनिषद"))],
-                   over=[kd.chips_at([(at("हज़ारों") + 0.3, "STONE LAMP · INDIA · 1ST–3RD CENTURY CE", "c", 330, {"size": 32}),
-                                      (at("बृहदारण्यक"), "BRIHADARANYAKA UPANISHAD 1.3.28", "c", 430, {"size": 30, "fg": CREAM, "border": (200, 160, 100)})])],
-                   credit=MET, grade_kind="warm"))
-    for i, (ph, nxt, sh, l1) in enumerate([("असतो मा", "तमसो मा", "steps1", "असतो मा सद्गमय"), ("तमसो मा", "मृत्योर्मा", "steps2", "तमसो मा ज्योतिर्गमय"),
-                                            ("मृत्योर्मा", "असत्य से", "steps3", "मृत्योर्मा अमृतं गमय")]):
-        s.append(Scene(at(ph), at(nxt), kd.BG_kb(f"{R3}/{sh}.png", (0.5, 0.55, 0.95), (0.5, 0.53, 0.88)),
-                       over=[kd.deva_card(at(ph), l1, None, None, y=1320, size=104, color=(255, 226, 160))], fx=[kd.flicker(0.05)], grade_kind="flame"))
-    s.append(Scene(at("असत्य से"), at("दिवाली का"), BG_black(),
-                   over=[kd.chips_at([(at("असत्य से"), "ASATYA  →  SATYA", "c", 780, {"size": 64}),
-                                      (at("अँधेरे से"), "ANDHERA  →  ROSHNI", "c", 960, {"size": 64}),
-                                      (at("मृत्यु से"), "MRITYU  →  AMRIT", "c", 1140, {"size": 64})])],
-                   fx=[kd.light_glow(0.5, 0.55, 420, (255, 200, 130), 0.4, 0.1)], grade_kind=None))
-    s.append(Scene(at("दिवाली का"), END, BG_black(),
-                   caps=[(at("दिवाली का"), "DIWALI KA POORA ARTH", "IN 3 PANKTIYON MEIN", GOLD, at("तीन पंक्तियों")),
-                         (at("आज जब"), "AAJ DIYA JALAYEN,", "TO YE MANTRA BOLIYE", GOLD, at("ये मंत्र")),
-                         (at("शुभ दीपावली"), "SHUBH", "DEEPAVALI", GOLD, at("शुभ दीपावली") + 0.4)],
-                   fx=[kd.light_glow(0.5, 0.5, 340, (255, 190, 100), 0.9, 0.12), kd.embers(60, 53, (255, 190, 110), 70, 0.8)],
-                   over=[kd.deva_card(at("शुभ दीपावली"), "शुभ दीपावली", None, None, y=760, size=150, color=(255, 214, 140)),
-                         kd.chips_at([(at("शुभ दीपावली") + 0.5, "FOLLOW · KATHA DEEP", "c", 1560, {"size": 46})])], grade_kind=None))
-    return s
+    G = lambda n: f"{R3}/ghat{n}.png"
+    def add(sc, tr=None):
+        sc.trans = tr
+        s.append(sc)
+    add(Scene(0, at("और फिर भी"), kd.BG_kb(G(0), (0.5, 0.42, 0.95), (0.5, 0.36, 0.80)),
+              caps=[(0.0, "AAJ AMAVASYA HAI", None, None), (at("आसमान"), "AASMAAN MEIN", "CHAAND NAHI", CREAM, at("चाँद"))], grade_kind=None))
+    add(Scene(at("और फिर भी"), at("हज़ारों"), kd.BG_kb(G(6), (0.5, 0.55, 1.0), (0.5, 0.55, 0.85)),
+              caps=[(at("और फिर भी"), "PHIR BHI AAJ:", "SAAL KI SABSE ROSHAN RAAT", GOLD, at("सबसे रोशन"))],
+              fx=[kd.embers(70, 51, (255, 190, 100), 90, 0.8, (1, 4))], grade_kind="flame"), "flash")
+    add(Scene(at("हज़ारों"), at("असतो मा"), kd.BG_kb(f"{A}/38758.jpg", (0.5, 0.55, 0.45), (0.5, 0.55, 0.36)),
+              caps=[(at("हज़ारों"), "HAZAARON SAAL PURANA", "EK MANTRA", GOLD, at("एक मंत्र")),
+                    (at("बृहदारण्यक"), "BRIHADARANYAKA", "UPANISHAD", GOLD, at("उपनिषद"))],
+              over=[kd.chips_at([(at("हज़ारों") + 0.3, "STONE LAMP · INDIA · 1ST–3RD CENTURY CE", "c", 330, {"size": 32}),
+                                 (at("बृहदारण्यक"), "BRIHADARANYAKA UPANISHAD 1.3.28", "c", 430, {"size": 30, "fg": CREAM, "border": (200, 160, 100)})])],
+              credit=MET, grade_kind="warm"), "zoom")
+    for ph, nxt, g, l1, tr in [("असतो मा", "तमसो मा", 2, "असतो मा सद्गमय", "cut"), ("तमसो मा", "मृत्योर्मा", 4, "तमसो मा ज्योतिर्गमय", "zoom"),
+                               ("मृत्योर्मा", "असत्य से", 6, "मृत्योर्मा अमृतं गमय", "iris")]:
+        add(Scene(at(ph), at(nxt), kd.BG_kb(G(g), (0.5, 0.60, 0.85), (0.5, 0.58, 0.70)),
+                  over=[kd.deva_card(at(ph), l1, None, None, y=300, size=104, color=(255, 226, 160))], fx=[kd.flicker(0.05)], grade_kind="flame"), tr)
+    for ph, nxt, txt in [("असत्य से", "अँधेरे से", "ASATYA → SATYA"), ("अँधेरे से", "मृत्यु से", "ANDHERA → ROSHNI"), ("मृत्यु से", "दिवाली का", "MRITYU → AMRIT")]:
+        add(Scene(at(ph), at(nxt), BG_black(), fx=[kd.light_glow(0.5, 0.5, 380, (255, 190, 110), 0.55, 0.15)],
+                  over=[kd.big_text(at(ph), txt, 820, 150 if len(txt) < 15 else 128, GOLD)], grade_kind=None), "zoom")
+    add(Scene(at("दिवाली का"), at("आज जब"), kd.BG_kb(G(6), (0.5, 0.62, 0.55), (0.5, 0.52, 1.0)),
+              caps=[(at("दिवाली का"), "DIWALI KA POORA ARTH", "IN 3 PANKTIYON MEIN", GOLD, at("तीन पंक्तियों"))],
+              fx=[kd.embers(60, 52, (255, 190, 110), 70, 0.8)], grade_kind="flame"), "cut")
+    add(Scene(at("आज जब"), END, BG_black(),
+              caps=[(at("आज जब"), "AAJ DIYA JALAYEN,", "TO YE MANTRA BOLIYE", GOLD, at("ये मंत्र")),
+                    (at("शुभ दीपावली"), "SHUBH", "DEEPAVALI", GOLD, at("शुभ दीपावली") + 0.4)],
+              fx=[kd.light_glow(0.5, 0.5, 340, (255, 190, 100), 0.9, 0.12), kd.embers(60, 53, (255, 190, 110), 70, 0.8)],
+              over=[kd.deva_card(at("शुभ दीपावली"), "शुभ दीपावली", None, None, y=760, size=150, color=(255, 214, 140)),
+                    kd.chips_at([(at("शुभ दीपावली") + 0.5, "FOLLOW · KATHA DEEP", "c", 1560, {"size": 46})])], grade_kind=None), "iris")
+    return kdv2.expand(s)
 
 
 def audio():

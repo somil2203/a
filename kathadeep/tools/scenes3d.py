@@ -513,7 +513,69 @@ def shot_steps3():
     _steps(3); cam((0.6, -7.5, 2.0), (0, 1.6, 1.4), 38); bg.inputs[0].default_value = (0.01, 0.01, 0.02, 1)
 
 
-{"mala": shot_mala, "mala_fallen": shot_mala_fallen, "trees": shot_trees, "trees_fallen": shot_trees_fallen, "steps1": shot_steps1, "steps2": shot_steps2, "steps3": shot_steps3, "diyas2": shot_diyas2, "diya_ring": shot_diya_ring, "threshold": shot_threshold, "diyas_close": shot_diyas_close, "chakra": shot_chakra, "fort": shot_fort,
+def _ghat(rows_lit):
+    """River ghat at night: wide stone steps with rows of clay diyas, water below reflecting them, haze, stars."""
+    rng = random.Random(11)
+    stone = mat("ghatstone", (0.30, 0.25, 0.21), 0, 0.8)
+    n_steps = 6
+    for k in range(n_steps):
+        bpy.ops.mesh.primitive_cube_add(size=1)
+        o = bpy.context.object
+        o.scale = (16, 1.3, 0.45 + k * 0.45)
+        o.location = (0, 2.0 + k * 1.3, -0.45 + (0.45 + k * 0.45) / 2)
+        bev = o.modifiers.new("b", "BEVEL")
+        bev.width = 0.05
+        bev.segments = 2
+        assign(o, stone)
+        z = -0.45 + 0.45 + k * 0.45
+        lit = k < rows_lit
+        for i in range(-7, 8):
+            if rng.random() < 0.15:
+                continue
+            diya(i * 1.0 + rng.uniform(-0.15, 0.15), 1.8 + k * 1.3 + rng.uniform(-0.1, 0.1), lit=lit, scale=0.32, z=z + 0.06)
+    bpy.ops.mesh.primitive_plane_add(size=120, location=(0, -30, -0.46))
+    water = bpy.context.object
+    assign(water, mat("river", (0.02, 0.03, 0.05), 0.0, 0.04))
+    for i in range(160):   # stars
+        bpy.ops.mesh.primitive_uv_sphere_add(segments=6, ring_count=4, radius=rng.uniform(0.04, 0.12),
+                                             location=(rng.uniform(-60, 60), 70 + rng.uniform(0, 20), rng.uniform(8, 50)))
+        assign(bpy.context.object, mat("star", (1, 1, 1), 0, 1, (1, 0.95, 0.85), rng.uniform(4, 14)))
+    vol = bpy.data.materials.new("haze")
+    vol.use_nodes = True
+    nt = vol.node_tree
+    nt.nodes.remove(nt.nodes["Principled BSDF"])
+    v = nt.nodes.new("ShaderNodeVolumePrincipled")
+    v.inputs["Density"].default_value = 0.006
+    v.inputs["Color"].default_value = (1.0, 0.75, 0.55, 1)
+    nt.links.new(v.outputs[0], nt.nodes["Material Output"].inputs["Volume"])
+    bpy.ops.mesh.primitive_cube_add(size=60, location=(0, 10, 10))
+    assign(bpy.context.object, vol)
+    sc.cycles.volume_step_rate = 4
+    bg.inputs[0].default_value = (0.004, 0.005, 0.015, 1)
+    c = cam((1.6, -5.5, 3.4), (0, 5.0, 1.0), 26)
+    c.data.dof.use_dof = True
+    c.data.dof.focus_distance = 9.5
+    c.data.dof.aperture_fstop = 2.2
+    light("AREA", (0, -6, 10), 25 if rows_lit else 6, (0.5, 0.55, 0.9), 10)
+
+
+def shot_ghat0():
+    _ghat(0)
+
+
+def shot_ghat2():
+    _ghat(2)
+
+
+def shot_ghat4():
+    _ghat(4)
+
+
+def shot_ghat6():
+    _ghat(6)
+
+
+{"ghat0": shot_ghat0, "ghat2": shot_ghat2, "ghat4": shot_ghat4, "ghat6": shot_ghat6, "mala": shot_mala, "mala_fallen": shot_mala_fallen, "trees": shot_trees, "trees_fallen": shot_trees_fallen, "steps1": shot_steps1, "steps2": shot_steps2, "steps3": shot_steps3, "diyas2": shot_diyas2, "diya_ring": shot_diya_ring, "threshold": shot_threshold, "diyas_close": shot_diyas_close, "chakra": shot_chakra, "fort": shot_fort,
  "kundal": shot_kundal, "lotus": shot_lotus, "razor": shot_razor}[SHOT]()
 sc.render.filepath = OUT
 bpy.ops.render.render(write_still=True)

@@ -62,3 +62,24 @@ court/army scenes or typography. No image used in B, C or D is reused in the Par
 - Met 38036 was assumed to show Ravana; its inscriptions read **सीता / वाल्मीकि / लक्ष्मण** (Sita at Valmiki's ashram) → Ravana beat moved to a typographic plate.
 - A Sheshashayi print crop showed Lakshmi, not Bhumi Devi → replaced with the Vishnu–Sri–Bhu print.
 - One Bhagavata folio was cropped 3× → cut to 2 distinct figure groups; one image swapped.
+
+## 6. Edit grammar v2 (adopted 8 Nov 2026 after viewer feedback: "edits feel common, same transition every cut")
+
+Research notes (practitioner guides; no hard retention data published):
+- Default to clean **hard cuts**; save whip / zoom / flash for moments that mean something. The same effect on every boundary reads as wallpaper.
+- Rotate 2–3 kinds of **pattern interrupt** (reframe, punch-in, motion change) instead of one.
+- Avoid **dead air** (>1 s without new information); a cut on the spoken word keeps momentum.
+- For painting-led storytelling the signature look is **2.5D parallax** (layers moving at different speeds).
+- **J-cuts**: the next scene's sound starts a beat early.
+
+Measured: master reference A has few hard cuts (≈8 in 128 s) but a continuously moving camera (median frame-to-frame
+motion 1.04 vs 0.77 for the v1 Din 3 edit); Din 1 (B) changes the picture every ~3 s. v1 Diwali edits went 12–40 s without a new shot.
+
+What v2 does (tools/kdv2.py):
+1. Depth map per image (Depth-Anything-V2-Small, cached in depth/), per-pixel parallax while the camera travels.
+2. Every painting/render scene is covered in 1.2–2.6 s shots: wide → medium → close-up on the subject
+   (nearest + most detailed region, biased upward toward faces), cut at caption/word times.
+3. Speed-ramped moves (fast push in the first quarter, slow drift after), alternating push/left/rise/orbit/right/pull.
+4. Transition chosen per beat: cut (default) · zoom-punch (emphasis) · whip (place/time change) · flash (reveal/impact) ·
+   push (manuscript page turn) · iris (spiritual moment).
+5. One look per reel (manuscript frame / storybook kinetic subtitles / black-and-gold minimal) so consecutive reels don't look alike.
