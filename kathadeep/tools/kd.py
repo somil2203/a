@@ -307,6 +307,7 @@ class Scene:
             f(base, t, self)
         base = finish(base.convert("RGB"), fi, self.vig).convert("RGBA")
         draw_caps(base, t, self.caps)
+        draw_subs(base, t)
         for f in self.over:
             f(base, t, self)
         if tag:
@@ -323,9 +324,111 @@ class Scene:
 
 
 CAP_X, CAP_Y, CAP_SIZE, CAP_LH = 66, 190, 112, 112
+CAP_MODE = "topleft"          # "topleft" (series default) | "lower" (centred under a frame) | "mono" (small spaced line at bottom)
+LOWER_Y, LOWER_C1, LOWER_C2 = 1590, (92, 20, 16), (176, 112, 18)
+SUBS = None                    # kinetic Devanagari subtitles: Timing object, or None
 
 
 def draw_caps(base, t, caps):
+    if CAP_MODE == "lower":
+        return draw_caps_lower(base, t, caps)
+    if CAP_MODE == "mono":
+        return draw_caps_mono(base, t, caps)
+    return draw_caps_topleft(base, t, caps)
+
+
+def _cur(t, caps):
+    cur = None
+    for c in caps:
+        if c[0] <= t:
+            cur = c
+    return cur
+
+
+def draw_caps_lower(base, t, caps):
+    cur = _cur(t, caps)
+    if not cur:
+        return
+    t1, l1, l2, col2, t2 = (list(cur) + [None] * 5)[:5]
+    y = LOWER_Y
+    for line, ts, col, size in ((l1, t1, LOWER_C1, 74), (l2, t2 if t2 is not None else t1, LOWER_C2, 92)):
+        if not line or ts is None or t < ts:
+            continue
+        k = eo((t - ts) / 0.25)
+        sz = size if len(line) <= 20 else int(size * 20 / len(line))
+        im = text_img(line, "anton", sz, col, shadow=False)
+        paste_fade(base, im, (W / 2 - im.width / 2, y - 30 + 18 * (1 - k)), k)
+        y += int(sz * 1.05)
+
+
+def draw_caps_mono(base, t, caps):
+    cur = _cur(t, caps)
+    if not cur:
+        return
+    t1, l1, l2, col2, t2 = (list(cur) + [None] * 5)[:5]
+    txt = " ".join(x for x in (l1, l2 if (t2 is None or t >= t2) else None) if x)
+    k = eo((t - t1) / 0.4)
+    im = text_img(txt, "mono", 34 if len(txt) < 34 else int(34 * 34 / len(txt)), (236, 214, 170), tracking=3)
+    paste_fade(base, im, (W / 2 - im.width / 2, 1700), k)
+
+
+def draw_subs(base, t):
+    """Kinetic Devanagari subtitles from the ElevenLabs alignment: up to 4 words per chunk (breaks at
+    punctuation), the spoken word in gold, centred in the lower third."""
+    if SUBS is None:
+        return
+    words = _sub_words()
+    chunk = None
+    for ch in _sub_chunks():
+        if words[ch[0]][1] - 0.05 <= t <= words[ch[-1]][2] + 0.35:
+            chunk = ch
+    if not chunk:
+        return
+    f = ImageFont.truetype(f"{KD}/fonts/Hind-SemiBold.ttf", 76, layout_engine=ImageFont.Layout.RAQM)
+    parts = []
+    for i in chunk:
+        w, a, b = words[i]
+        on = a <= t <= b + 0.08
+        parts.append((w, (255, 214, 90) if on else (255, 250, 240), on))
+    widths = [f.getlength(w + " ") for w, _, _ in parts]
+    total = sum(widths)
+    x = W / 2 - total / 2
+    y = 1430
+    lay = Image.new("RGBA", (W, H))
+    d = ImageDraw.Draw(lay)
+    for (w, col, on), wd in zip(parts, widths):
+        d.text((x, y - (6 if on else 0)), w, font=f, fill=(*col, 255), stroke_width=7, stroke_fill=(10, 6, 4, 235))
+        x += wd
+    base.alpha_composite(lay)
+
+
+@lru_cache(1)
+def _sub_words():
+    txt, st, en = SUBS.text, SUBS.st, SUBS.en
+    out, i = [], 0
+    for tok in txt.replace("\n", " ").split(" "):
+        j = txt.find(tok, i) if tok else -1
+        if tok.strip() and j >= 0 and any(c.isalnum() or "\u0900" <= c <= "\u097f" for c in tok):
+            out.append((tok.strip(), st[j], en[j + len(tok) - 1]))
+            i = j + len(tok)
+    return out
+
+
+@lru_cache(1)
+def _sub_chunks():
+    ws = _sub_words()
+    chunks, cur = [], []
+    for i, (w, a, b) in enumerate(ws):
+        cur.append(i)
+        if len(cur) >= 4 or w[-1] in "।?,—" or (i + 1 < len(ws) and ws[i + 1][1] - b > 0.35):
+            chunks.append(cur)
+            cur = []
+    if cur:
+        chunks.append(cur)
+    return chunks
+
+
+def draw_caps_topleft(base, t, caps):
     """caps: list of (time, line1, line2, color2, time2). The active caption is the last whose time <= t.
     line2 (if any) appears at time2. Each line slides up 26px and fades in over 0.22 s."""
     cur = None
@@ -489,6 +592,31 @@ def silhouette_boy(x, y, h=330, color=(12, 6, 6)):
 
 
 # ------------------------------------------------------------------ render
+TRANS = "fade"
+
+
+def transition(kind, a, b, k):
+    if kind == "push":            # page slide: old slides left, new comes in from the right
+        out = Image.new("RGB", (W, H))
+        off = int(W * k)
+        out.paste(a, (-off, 0))
+        out.paste(b, (W - off, 0))
+        return out
+    if kind == "whip":            # whip pan: fast horizontal smear through the cut
+        src = a if k < 0.5 else b
+        sh = int((1 - abs(k - 0.5) * 2) * 260) * (1 if k < 0.5 else -1)
+        moved = src.transform((W, H), Image.AFFINE, (1, 0, sh, 0, 1, 0), Image.BILINEAR)
+        blur = moved.filter(ImageFilter.BoxBlur(int(4 + 30 * (1 - abs(k - 0.5) * 2))))
+        return blur
+    if kind == "iris":            # circle of light opening from the centre
+        m = Image.new("L", (W, H), 0)
+        r = int(1150 * k)
+        ImageDraw.Draw(m).ellipse((W / 2 - r, H * 0.55 - r, W / 2 + r, H * 0.55 + r), fill=255)
+        m = m.filter(ImageFilter.GaussianBlur(40))
+        return Image.composite(b, a, m)
+    return Image.blend(a, b, k)
+
+
 def render(scenes, out, tag=None, xfade=0.24, t_end=None):
     t_end = t_end or scenes[-1].t1
     n = int(round(t_end * FPS))
@@ -502,10 +630,12 @@ def render(scenes, out, tag=None, xfade=0.24, t_end=None):
             si += 1
         sc = scenes[si]
         im = sc.frame(t, fi, tag)
-        if si > 0 and t - sc.t0 < xfade and getattr(sc, "xfade", True):
-            prev = scenes[si - 1]
-            k = ss((t - sc.t0) / xfade)
-            im = Image.blend(prev.frame(t, fi, tag), im, k)
+        tr = getattr(sc, "trans", TRANS)
+        dur = {"fade": xfade, "push": 0.38, "whip": 0.30, "iris": 0.5}.get(tr, xfade)
+        if si > 0 and t - sc.t0 < dur and tr != "cut":
+            prev = scenes[si - 1].frame(t, fi, tag)
+            k = ss((t - sc.t0) / dur)
+            im = transition(tr, prev, im, k)
         p.stdin.write(im.tobytes())
         if fi % 300 == 0:
             print(f"  frame {fi}/{n}", flush=True)
@@ -579,4 +709,84 @@ def BG_stars(seed=5, n=900):
                 d.ellipse((sx - r, sy - r, sx + r, sy + r), fill=cols[c])
         im = im.filter(ImageFilter.GaussianBlur(0.6))
         return im
+    return f
+
+
+# ------------------------------------------------------------------ framed-manuscript look
+@lru_cache(2)
+def parchment(tone="ivory"):
+    rng = np.random.default_rng(7)
+    base = {"ivory": (243, 230, 202), "night": (18, 12, 10)}[tone]
+    a = np.ones((H, W, 3), np.float32) * np.array(base)
+    n = rng.normal(0, 1, (H // 8, W // 8)).astype(np.float32)
+    n = np.array(Image.fromarray(((n - n.min()) / (n.max() - n.min()) * 255).astype(np.uint8)).resize((W, H), Image.BICUBIC)).astype(np.float32) / 255
+    a *= (0.9 + 0.12 * n)[..., None]
+    y, x = np.mgrid[0:H, 0:W].astype(np.float32)
+    d = np.sqrt(((x - W / 2) / W) ** 2 + ((y - H / 2) / H) ** 2)
+    a *= (1.05 - 0.45 * d ** 2)[..., None]
+    return Image.fromarray(np.clip(a, 0, 255).astype(np.uint8))
+
+
+FRAME = (80, 300, 1000, 1500)   # inner art window (920 x 1200)
+
+
+def _frame_overlay(gold=(176, 112, 18)):
+    ov = Image.new("RGBA", (W, H))
+    d = ImageDraw.Draw(ov)
+    x0, y0, x1, y1 = FRAME
+    for o, w_ in ((14, 6), (28, 2)):
+        d.rectangle((x0 - o, y0 - o, x1 + o, y1 + o), outline=(*gold, 255), width=w_)
+    for cx, cy in ((x0 - 21, y0 - 21), (x1 + 21, y0 - 21), (x0 - 21, y1 + 21), (x1 + 21, y1 + 21)):
+        for r in (22, 14, 6):
+            d.ellipse((cx - r, cy - r, cx + r, cy + r), outline=(*gold, 255), width=3)
+        for a_ in range(8):
+            ang = a_ * math.pi / 4
+            d.line((cx + math.cos(ang) * 24, cy + math.sin(ang) * 24, cx + math.cos(ang) * 40, cy + math.sin(ang) * 40), fill=(*gold, 255), width=3)
+    mid = (x0 + x1) / 2
+    for i in range(-6, 7):
+        d.ellipse((mid + i * 26 - 5, y0 - 52, mid + i * 26 + 5, y0 - 42), fill=(*gold, 200))
+    return ov
+
+
+@lru_cache(1)
+def frame_overlay():
+    return _frame_overlay()
+
+
+def BG_framed(path, a, b, tone="ivory", maxside=3200):
+    """Art (or a render) inside a gilt manuscript frame on parchment; Ken Burns inside the window."""
+    src = load_rgb(path, maxside)
+    x0, y0, x1, y1 = FRAME
+    ww, wh = x1 - x0, y1 - y0
+
+    def f(lt, fr, fi):
+        e = ss(fr)
+        cx, cy, wf = (lerp(a[i], b[i], e) for i in range(3))
+        sw, sh = src.size
+        w = wf * sw
+        h = w * wh / ww
+        if h > sh:
+            h = sh
+            w = h * ww / wh
+        rx = clamp(cx * sw - w / 2, 0, sw - w)
+        ry = clamp(cy * sh - h / 2, 0, sh - h)
+        win = src.transform((ww, wh), Image.EXTENT, (rx, ry, rx + w, ry + h), Image.BICUBIC)
+        im = parchment(tone).copy().convert("RGBA")
+        sh_ = Image.new("RGBA", (W, H))
+        ImageDraw.Draw(sh_).rectangle((x0 + 10, y0 + 16, x1 + 10, y1 + 16), fill=(60, 30, 10, 120))
+        im.alpha_composite(sh_.filter(ImageFilter.GaussianBlur(16)))
+        im.paste(win, (x0, y0))
+        im.alpha_composite(frame_overlay())
+        return im.convert("RGB")
+    return f
+
+
+def BG_paper_plate(tone="ivory"):
+    """Plain parchment with the gilt frame and an empty window tinted maroon (for chips / lists)."""
+    def f(lt, fr, fi):
+        im = parchment(tone).copy().convert("RGBA")
+        x0, y0, x1, y1 = FRAME
+        ImageDraw.Draw(im).rectangle((x0, y0, x1, y1), fill=(92, 20, 16, 255))
+        im.alpha_composite(frame_overlay())
+        return im.convert("RGB")
     return f

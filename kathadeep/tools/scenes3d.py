@@ -377,7 +377,143 @@ def shot_threshold():
     light("AREA", (0, -2, 6), 60, (1, 0.6, 0.4), 6)
 
 
-{"diyas2": shot_diyas2, "diya_ring": shot_diya_ring, "threshold": shot_threshold, "diyas_close": shot_diyas_close, "chakra": shot_chakra, "fort": shot_fort,
+def _mala(fallen=False):
+    """A divine flower garland: a closed loop of marigold-like blossoms with a few white flowers and leaves."""
+    rng = random.Random(3)
+    marigold = mat("marigold", (1.0, 0.45, 0.02), 0, 0.6, (1.0, 0.35, 0.0), 0.0 if fallen else 0.6)
+    white = mat("jasmine", (0.95, 0.93, 0.85), 0, 0.5)
+    leaf = mat("leaf", (0.05, 0.28, 0.06), 0, 0.5)
+    n = 60
+    for i in range(n):
+        a = 2 * math.pi * i / n
+        if fallen:   # crumpled loop lying on the ground
+            r = 1.6 + 0.35 * math.sin(a * 3 + 0.7)
+            x, y, z = math.cos(a) * r, math.sin(a) * r * 0.8, -0.3
+        else:        # hanging U-shaped loop in the air
+            x, y, z = math.sin(a) * 1.5, 0, -math.cos(a) * 2.2 + 0.4 * math.cos(2 * a)
+        bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=2, radius=0.2, location=(x, y, z))
+        o = bpy.context.object
+        o.scale = (1, 1, 0.8)
+        o.rotation_euler = (rng.random() * 3, rng.random() * 3, rng.random() * 3)
+        o.modifiers.new("disp", "DISPLACE").strength = 0.06
+        assign(o, white if i % 10 == 0 else marigold)
+        if i % 5 == 2:
+            bpy.ops.mesh.primitive_uv_sphere_add(radius=0.14, location=(x * 1.1, y - 0.12, z))
+            lf = bpy.context.object
+            lf.scale = (0.4, 1.4, 0.15)
+            assign(lf, leaf)
+
+
+def shot_mala():
+    """Durvasa's divine garland, glowing in the air."""
+    _mala(False)
+    for k in range(18):
+        bpy.ops.mesh.primitive_uv_sphere_add(radius=0.03, location=(random.uniform(-2.5, 2.5), random.uniform(-1, 1), random.uniform(-3, 3)))
+        assign(bpy.context.object, mat("spark", (1, 0.9, 0.6), 0, 0.5, (1, 0.85, 0.5), 30))
+    cam((0, -9, -0.6), (0, 0, -0.6), 45)
+    light("AREA", (-3, -5, 4), 500, (1, 0.85, 0.7), 4)
+    light("POINT", (0, 1.5, -0.5), 200, (1, 0.6, 0.2), 1)
+    bg.inputs[0].default_value = (0.08, 0.04, 0.10, 1)
+
+
+def shot_mala_fallen():
+    """The same garland thrown to the ground: dull light, dust."""
+    ground((0.16, 0.12, 0.10), 0.95)
+    _mala(True)
+    cam((0, -6.5, 4.2), (0, 0.3, -0.3), 40)
+    light("AREA", (4, -2, 6), 160, (0.7, 0.75, 0.9), 5)
+    bg.inputs[0].default_value = (0.03, 0.03, 0.04, 1)
+
+
+def _arjuna_tree(x, tilt=0.0):
+    bark = mat("bark", (0.42, 0.36, 0.30), 0, 0.85)
+    leaf = mat("foliage", (0.07, 0.25, 0.06), 0, 0.7)
+    root = bpy.data.objects.new("root", None)
+    sc.collection.objects.link(root)
+    root.location = (x, 0, -0.45)
+    bpy.ops.mesh.primitive_cone_add(vertices=24, radius1=0.55, radius2=0.32, depth=7, location=(0, 0, 3.5))
+    t = bpy.context.object
+    assign(t, bark)
+    t.parent = root
+    rng = random.Random(int(x * 10) + 5)
+    for k in range(14):
+        bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=2, radius=rng.uniform(1.0, 1.6),
+                                              location=(rng.uniform(-1.6, 1.6), rng.uniform(-1.2, 1.2), rng.uniform(6.2, 8.6)))
+        f = bpy.context.object
+        assign(f, leaf)
+        f.parent = root
+    if tilt:
+        for k in range(7):   # exposed roots
+            a = 2 * math.pi * k / 7
+            bpy.ops.mesh.primitive_cone_add(vertices=8, radius1=0.16, depth=1.8,
+                                            location=(math.cos(a) * 0.5, math.sin(a) * 0.5, -0.4),
+                                            rotation=(math.pi + math.sin(a) * 0.6, math.cos(a) * 0.6, 0))
+            r = bpy.context.object
+            assign(r, bark)
+            r.parent = root
+    root.rotation_euler = (0, tilt, 0)
+
+
+def _okhli(x, z=0.0):
+    wood = mat("okhli", (0.30, 0.14, 0.05), 0, 0.6)
+    bpy.ops.mesh.primitive_cylinder_add(vertices=32, radius=0.45, depth=0.9, location=(x, -0.2, z))
+    assign(bpy.context.object, wood)
+    bpy.ops.mesh.primitive_torus_add(major_radius=0.47, minor_radius=0.04, location=(x, -0.2, z + 0.1))
+    assign(bpy.context.object, mat("rope", (0.75, 0.6, 0.35), 0, 0.9))
+
+
+def shot_trees():
+    """Gokul courtyard: the twin arjuna trees standing close, the okhli (wooden mortar) between them."""
+    ground((0.30, 0.20, 0.12), 0.9, 80)
+    _arjuna_tree(-1.3)
+    _arjuna_tree(1.3)
+    _okhli(0, -0.05)
+    cam((0, -14, 3.5), (0, 0, 4.2), 35)
+    light("SUN", (0, 0, 10), 3.5, (1, 0.88, 0.7), rot=(0.7, 0.3, 0.4))
+    bg.inputs[0].default_value = (0.55, 0.62, 0.75, 1)
+
+
+def shot_trees_fallen():
+    """The same two trees pulled out by the roots, falling apart; the okhli stuck between the trunks."""
+    ground((0.30, 0.20, 0.12), 0.9, 80)
+    _arjuna_tree(-1.4, -0.75)
+    _arjuna_tree(1.4, 0.75)
+    _okhli(0, 0.0)
+    for k in range(40):
+        bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=1, radius=random.uniform(0.05, 0.18),
+                                              location=(random.uniform(-2.5, 2.5), random.uniform(-1, 1), random.uniform(-0.3, 1.5)))
+        assign(bpy.context.object, mat("dirt", (0.25, 0.16, 0.08), 0, 1))
+    cam((0, -14, 3.0), (0, 0, 3.0), 35)
+    light("SUN", (0, 0, 10), 3.5, (1, 0.85, 0.65), rot=(0.7, -0.3, 0.4))
+    bg.inputs[0].default_value = (0.5, 0.55, 0.68, 1)
+
+
+def _steps(lit):
+    stone = mat("stone", (0.32, 0.27, 0.24), 0, 0.85)
+    for k in range(3):
+        bpy.ops.mesh.primitive_cube_add(size=1, location=(0, k * 1.6, -0.45 + k * 0.7 + 0.35))
+        o = bpy.context.object
+        o.scale = (5, 1.6, 0.7 + k * 1.4)
+        o.location.z = -0.45 + (0.7 + k * 1.4) / 2
+        assign(o, stone)
+    for k in range(3):
+        diya(-0.5, k * 1.6, lit=k < lit, scale=0.55, z=-0.45 + 0.7 + k * 1.4 + 0.05)
+    light("AREA", (3, -4, 5), 40, (0.6, 0.6, 0.9), 6)
+
+
+def shot_steps1():
+    _steps(1); cam((0.6, -7.5, 2.0), (0, 1.6, 1.4), 38); bg.inputs[0].default_value = (0.01, 0.01, 0.02, 1)
+
+
+def shot_steps2():
+    _steps(2); cam((0.6, -7.5, 2.0), (0, 1.6, 1.4), 38); bg.inputs[0].default_value = (0.01, 0.01, 0.02, 1)
+
+
+def shot_steps3():
+    _steps(3); cam((0.6, -7.5, 2.0), (0, 1.6, 1.4), 38); bg.inputs[0].default_value = (0.01, 0.01, 0.02, 1)
+
+
+{"mala": shot_mala, "mala_fallen": shot_mala_fallen, "trees": shot_trees, "trees_fallen": shot_trees_fallen, "steps1": shot_steps1, "steps2": shot_steps2, "steps3": shot_steps3, "diyas2": shot_diyas2, "diya_ring": shot_diya_ring, "threshold": shot_threshold, "diyas_close": shot_diyas_close, "chakra": shot_chakra, "fort": shot_fort,
  "kundal": shot_kundal, "lotus": shot_lotus, "razor": shot_razor}[SHOT]()
 sc.render.filepath = OUT
 bpy.ops.render.render(write_still=True)
