@@ -1,0 +1,13 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@font-face{font-family:Baloo;src:url(../fonts/Baloo2.ttf)}html,body{margin:0;background:#222}</style></head><body>
+<svg id="v" width="1080" height="1920" viewBox="0 0 1080 1920" xmlns="http://www.w3.org/2000/svg"></svg>
+<script src="art.js"></script><script>
+const defs=`<defs><radialGradient id="halo"><stop offset="0" stop-color="#FFE7A8" stop-opacity=".9"/><stop offset="1" stop-color="#FFC94A" stop-opacity="0"/></radialGradient>
+<radialGradient id="rage"><stop offset="0" stop-color="#FF6A3A" stop-opacity=".9"/><stop offset="1" stop-color="#C1121F" stop-opacity="0"/></radialGradient>
+<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3B2C6B"/><stop offset="1" stop-color="#E8956B"/></linearGradient></defs>`;
+document.getElementById('v').innerHTML=defs+`<rect width="1080" height="1920" fill="url(#sky)"/>`+
+ krishna({x:200,y:700,s:0.9,armR:-150,flute:false})+nand({x:520,y:700,s:0.8,staff:true})+indra({x:860,y:760,s:0.7})+
+ cow({x:300,y:1100,s:0.9})+cow({x:760,y:1100,s:0.9,flip:true,crown:true,cloth:true})+
+ person({x:120,y:1500,s:0.8,stick:true})+person({x:340,y:1500,s:0.8,gopi:true,pot:true})+elephant({x:820,y:1500,s:0.6})+
+ mountain({x:540,y:1880,w:700,h:360,lifted:true})+kund(160,1900,0.6,1)+diya(940,1880,1,1)+mushroom(960,1700,0.6)+indra({x:620,y:1500,s:0.5,mood:'angry'});
+</script></body></html>
