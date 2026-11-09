@@ -90,3 +90,18 @@ picture on the word (`kdv2.keyword_shots` + `BG_auto`), never the same painting 
 No low-poly 3D or stick figures where a real artwork exists; where no authentic image of a figure exists
 (e.g. Durvasa), show the object of the story (the garland) or type, never a different sage labelled as him.
 Never put graphics over a deity's face. Museum numbers / labels must be cropped out.
+
+## 8. FORMAT RULE (9 Nov 2026, channel owner): every reel is ANIMATED STORYBOOK from now on
+Reference: viral Navratri reel (flat vector, warm gradients, one consistent character set, no hard cuts, story counters,
+small Hinglish word-highlight subtitles). We keep our own length (~90 s). Museum-painting edits are retired.
+- Engine: `tools/anim/` — `art.js` + `art2.js` (shaded character library: Krishna, Nand, Indra, Gir cow, gopi, gwala,
+  Govardhan, trees, huts, clouds, diyas), `food.js` (kheer/halwa/pua/puri/laddoo/jalebi/dal/rice/makhan/barfi/fruit, thali,
+  chulha, 8-pahar dial, Yashoda, giant form), `engine.js` (backgrounds, rain/wind/water, stars, titles, counters, camera paths,
+  shake/flash), `lib_scenes.js` (wideLift, Deepotsav tracker), `frame.js` (transitions: fade/zoom/up/whip/iris/wipe/flash + subtitles).
+- New episode: copy `tools/anim/index.template.html` to `<ep>/index.html`; write `vo/script.txt` → `tools/tts.py` → `tools/vo_qc.py`;
+  write `roman.txt` (Hinglish, '/' = phrase break, same word count), `keys.txt` (timing anchors), `keywords.txt`;
+  `python3 tools/anim/build_times.py <ep>`; write `scenes.js` with `add(t0, t1, draw, transition)`; stills:
+  `node ../tools/anim/render.js --stills st <t…>` (NOSUBS=1 for covers); full: `node ../tools/anim/render.js picture.mp4`;
+  `python3 edit.py` (audio mix) → `python3 tools/finalize.py <ep> FINAL_x.mp4 1 x x`.
+- Rules: one visual per spoken keyword; text that needs reading on light backgrounds uses dark ink; subtitles sit in a soft band;
+  folk beliefs are stamped "LOK-MAANYATA" on screen; scripture refs shown when quoted.
