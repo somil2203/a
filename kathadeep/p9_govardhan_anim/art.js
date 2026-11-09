@@ -295,7 +295,7 @@ function annakut(x, y, s, t) {
 function yamraj(x, y, s) {   // silhouette for the teaser (no face)
   return G(x, y, s, `<path d="M-90 0 L-70 -330 Q0 -360 70 -330 L90 0Z" fill="#1B1030"/><circle cx="0" cy="-400" r="64" fill="#1B1030"/>
     <path d="M-56 -440 L56 -440 L30 -560 L0 -590 L-30 -560Z" fill="#1B1030"/><rect x="80" y="-420" width="18" height="420" rx="8" fill="#1B1030"/><circle cx="89" cy="-440" r="40" fill="#1B1030"/>
-    <path d="M-56 -440 L56 -440" stroke="${C.gold}" stroke-width="6"/>`);
+    <path d="M-56 -440 L56 -440 M-30 -560 L0 -590 L30 -560" stroke="${C.gold}" stroke-width="6" fill="none"/><path d="M-90 0 L-70 -330 Q0 -360 70 -330 L90 0" stroke="#8C7CD8" stroke-width="4" fill="none" opacity=".6"/>`);
 }
 function yamuna(x, y, s) {
   return G(x, y, s, `<path d="M-100 0 Q-80 -240 0 -280 Q80 -240 100 0Z" fill="#1B1030"/><circle cx="0" cy="-330" r="56" fill="#1B1030"/>

@@ -9,7 +9,7 @@ const seg = (t, a, b) => clamp((t - a) / (b - a));
 const TT = window.TIMES;   // phrase -> seconds (from the ElevenLabs alignment)
 const at = (k) => TT[k];
 
-const DEFS = `<defs>
+const DEFS = `<defs>${ART_DEFS}
 <radialGradient id="halo"><stop offset="0" stop-color="#FFE7A8" stop-opacity=".95"/><stop offset=".5" stop-color="#FFD36A" stop-opacity=".35"/><stop offset="1" stop-color="#FFC94A" stop-opacity="0"/></radialGradient>
 <radialGradient id="rage"><stop offset="0" stop-color="#FF7A3A" stop-opacity=".95"/><stop offset="1" stop-color="#C1121F" stop-opacity="0"/></radialGradient>
 <radialGradient id="moonglow"><stop offset="0" stop-color="#FFF6DA" stop-opacity=".7"/><stop offset="1" stop-color="#FFF6DA" stop-opacity="0"/></radialGradient>
@@ -35,10 +35,10 @@ function petals(t, t0, n = 40) {
   let s = ''; for (let i = 0; i < n; i++) { const y = -60 + (t - t0) * (180 + rnd(i) * 140) - rnd(i + 1) * 900; if (y < -60 || y > H) continue; const x = rnd(i + 2) * W + Math.sin(t * 2 + i) * 40;
     s += `<ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="11" ry="6" fill="${['#F28C28', '#F5C04A', '#E0483A'][i % 3]}" transform="rotate(${((t * 90 + i * 40) % 360).toFixed(0)} ${x.toFixed(1)} ${y.toFixed(1)})"/>`; } return s;
 }
-function rain(t, dens = 1, alpha = 0.55, slant = 0.18, clip = '') {
+function rain(t, dens = 1, alpha = 0.55, slant = 0.18, clip = '', col = '#D6E4FF') {
   let s = ''; const n = Math.round(140 * dens);
   for (let i = 0; i < n; i++) { const sp = 1600 + rnd(i) * 1400, len = 40 + rnd(i + 4) * 70; const y = ((rnd(i + 1) * (H + 300) + t * sp) % (H + 300)) - 150; const x = ((rnd(i + 2) * (W + 400) - 200 + y * slant) % (W + 400)) - 100;
-    s += `<line x1="${x.toFixed(1)}" y1="${y.toFixed(1)}" x2="${(x + len * slant).toFixed(1)}" y2="${(y + len).toFixed(1)}" stroke="#D6E4FF" stroke-width="${(2 + rnd(i + 3) * 2).toFixed(1)}" stroke-linecap="round" opacity="${(alpha * (0.4 + 0.6 * rnd(i + 6))).toFixed(2)}"/>`; }
+    s += `<line x1="${x.toFixed(1)}" y1="${y.toFixed(1)}" x2="${(x + len * slant).toFixed(1)}" y2="${(y + len).toFixed(1)}" stroke="${col}" stroke-width="${(2 + rnd(i + 3) * 2).toFixed(1)}" stroke-linecap="round" opacity="${(alpha * (0.4 + 0.6 * rnd(i + 6))).toFixed(2)}"/>`; }
   return clip ? `<g clip-path="url(#${clip})">${s}</g>` : s;
 }
 function wind(t, k = 1) {
@@ -95,9 +95,9 @@ function wideLift(t, o) {
   s += cow({ x: 210, y: 1520, s: 0.5, flip: true }) + cow({ x: 880, y: 1530, s: 0.5 });
   s += person({ x: 120, y: 1540, s: 0.5, gopi: true, veil: '#C2405A', top: '#F2A03D' }) + person({ x: 330, y: 1530, s: 0.48, stick: true, top: '#3E8E5A' });
   s += person({ x: 760, y: 1530, s: 0.48, top: '#C2405A' }) + person({ x: 980, y: 1545, s: 0.5, gopi: true, veil: '#7B4BB7', top: '#F5C04A' });
-  const my = lerp(1500, 880, lift);
-  s += mountain({ x: 540, y: my, w: 1040, h: 500, lifted: lift > 0.05, sway: t });
-  s += krishna({ x: 540, y: 1545, s: 1.0, armL: lerp(18, 172, eo(o.arm ?? 1)), armLenL: lerp(112, 230, eo(o.arm ?? 1)), fingerL: true, glow: o.kglow ?? 0.6, eyes: 'closed' });
+  const my = lerp(1500, 772, lift);
+  s += mountain({ x: lerp(540, 470, lift), y: my, w: 1040, h: 500, lifted: lift > 0.05, sway: t });
+  s += krishna({ x: 540, y: 1545, s: 1.0, armL: lerp(18, 166, eo(o.arm ?? 1)), fingerL: (o.arm ?? 1) > 0.02, glow: o.kglow ?? 0.6, eyes: 'closed' });
   return s;
 }
 add(0, at('कल गोवर्धन'), (t) => {
@@ -143,7 +143,7 @@ add(at('भागवत'), at('नन्हे'), (t) => {
   w += cloud(200, 380, 0.7, '#FFF4E4', '#F7DCC4') + cloud(900, 260, 0.5, '#FFF4E4', '#F7DCC4');
   // Indra on Airavata arrives in a cloud bank
   const ik = eo(seg(t, at('इंद्र देव') - 0.1, at('इंद्र देव') + 0.8));
-  w += `<g transform="translate(0 ${(-400 * (1 - ik)).toFixed(1)})" opacity="${ik.toFixed(2)}">` + elephant({ x: 420, y: 700, s: 0.42 }) + indra({ x: 470, y: 600, s: 0.38 })
+  w += `<g transform="translate(0 ${(-400 * (1 - ik)).toFixed(1)})" opacity="${ik.toFixed(2)}">` + indra({ x: 470, y: 600, s: 0.38 })
        + cloud(330, 720, 1.1, '#FFFFFF', '#E9E4F4') + cloud(560, 740, 0.9, '#FFFFFF', '#E9E4F4') + `</g>`;
   w += mountain({ x: 880, y: 1180, w: 520, h: 300, back: '#5E9466', front: '#79B27A' });
   w += ground(1150, '#8CBF6A', '#78AD5C');
@@ -181,14 +181,14 @@ add(at('नन्हे'), at('इंद्र के लिए'), (t) => {
 add(at('इंद्र के लिए'), at('कृष्ण बोले'), (t) => {
   const c = camPath(t, [[at('इंद्र के लिए'), 540, 820, 1.25], [at('बारिश देते'), 540, 900, 1.05], [at('कृष्ण बोले'), 540, 1000, 1.0]]);
   let w = bg('sky');
-  w += elephant({ x: 470, y: 900, s: 0.62 }) + indra({ x: 540, y: 760, s: 0.56, aura: 0.6, armR: -140 });
-  w += cloud(300, 940, 1.5, '#FFFFFF', '#DCE4F2') + cloud(740, 960, 1.4, '#FFFFFF', '#DCE4F2') + cloud(540, 1000, 1.2, '#FFFFFF', '#DCE4F2');
+  w += indra({ x: 540, y: 880, s: 0.56, aura: 0.6, armR: -140 });
+  w += cloud(300, 940, 1.5, '#E9EEF6', '#B9C5D9') + cloud(740, 960, 1.4, '#E9EEF6', '#B9C5D9') + cloud(540, 1000, 1.2, '#F4F7FB', '#C3CEE0');
   const rk = seg(t, at('बारिश देते') - 0.2, at('बारिश देते') + 0.4);
-  if (rk > 0) w += `<g opacity="${rk.toFixed(2)}" clip-path="url(#belowClouds)">${rain(t, 0.6, 0.6, 0.05)}</g>`;
+  if (rk > 0) w += `<g opacity="${rk.toFixed(2)}" clip-path="url(#belowClouds)">${rain(t, 1.3, 0.85, 0.05, '', '#4F78B8')}</g>`;
   w += ground(1450, '#7DB868', '#68A257');
   for (let i = 0; i < 9; i++) { const x = 80 + i * 115, h = 30 + 40 * rk + 10 * Math.sin(i); w += `<path d="M${x} 1520 q-10 ${-h} 0 ${-h * 1.4} q10 ${h * 0.4} 0 ${h * 1.4}Z" fill="#3E8E5A"/><path d="M${x} ${1520 - h} q-30 -10 -34 -30 q24 4 34 30Z" fill="#5BA463"/>`; }
   let s = cam(...c, `<clipPath id="belowClouds"><rect x="-500" y="1000" width="2100" height="1500"/></clipPath>` + w);
-  s += title('VAHI BAARISH DETE HAIN', 300, 66, seg(t, at('बारिश देते'), at('बारिश देते') + 0.3), '#1C2347', 'Baloo', 800);
+  s += title('VAHI BAARISH DETE HAIN', 220, 66, seg(t, at('बारिश देते'), at('बारिश देते') + 0.3), '#1C2347', 'Baloo', 800);
   return s;
 }, 'up');
 
@@ -254,6 +254,7 @@ add(at('प्रलय'), at('ब्रज डूबने'), (t) => {
   if (t > at('आँधी') - 0.2) w += wind(t, seg(t, at('आँधी') - 0.2, at('आँधी') + 0.3));
   for (let i = 0; i < 7; i++) { const x = lerp(-700 + i * 160, 60 + i * 160, ck) + Math.sin(t * 0.8 + i) * 20; w += cloud(x, 260 + (i % 3) * 120, 1.6 + rnd(i) * 0.5, '#3C4258', '#2A2F42'); }
   for (let i = 0; i < 5; i++) { const x = lerp(1800 - i * 200, 1000 - i * 200, ck); w += cloud(x, 520 + (i % 2) * 110, 1.3, '#4B5270', '#363C55'); }
+  for (let i = 0; i < 6; i++) { const x = lerp(-900 + i * 220, 0 + i * 220, ck); w += cloud(x, 780 + (i % 2) * 90, 1.1, '#5A617E', '#454B66'); }
   const b0 = at('बिजली');
   if (t > b0 && t < b0 + 0.45) w += bolt(560, 300, 1.4, 7);
   let s = cam(...c, `<g transform="${shake(t, at('बिजली'), 0.6, 18)}">${w}</g>`);
@@ -268,10 +269,10 @@ add(at('प्रलय'), at('ब्रज डूबने'), (t) => {
 // 8 FLOOD — everyone runs to Krishna
 add(at('ब्रज डूबने'), at('और तब'), (t) => {
   const lv = lerp(1700, 1520, eo(seg(t, at('ब्रज डूबने'), at('गायें, ग्वाले'))));
-  const c = camPath(t, [[at('ब्रज डूबने'), 420, 1080, 1.15], [at('सब दौड़े'), 520, 1080, 1.1], [at('और तब'), 760, 1100, 1.25]]);
+  const c = camPath(t, [[at('ब्रज डूबने'), 460, 1080, 1.12], [at('सब दौड़े'), 540, 1080, 1.08], [at('और तब'), 700, 1120, 1.2]]);
   let w = bg('storm');
   w += ground(1450, '#2F4F3A', '#263F30') + hut(120, 1520, 0.62, '#9A7056') + hut(420, 1540, 0.55, '#9A7056');
-  w += krishna({ x: 880, y: 1560, s: 0.8, glow: 0.9, eyes: 'closed', armL: 30, armR: -30 });
+  w += krishna({ x: 800, y: 1560, s: 0.8, glow: 0.9, eyes: 'closed', armL: 30, armR: -30 });
   const run = seg(t, at('गायें, ग्वाले') - 0.3, at('और तब'));
   const runners = [[cow, -60, 1640, 0.5, {}], [person, 120, 1650, 0.5, { stick: true, top: '#3E8E5A' }], [cow, 300, 1650, 0.46, {}], [person, 460, 1640, 0.5, { gopi: true, veil: '#C2405A', top: '#F2A03D' }], [person, 220, 1660, 0.46, { top: '#D8432F' }]];
   runners.forEach(([fn, x0, y, sc, o], i) => { const x = x0 + run * 420; w += fn({ ...o, x, y: y + Math.abs(Math.sin(t * 9 + i)) * -10, s: sc, ph: t * 10, flip: true, armL: 40 + Math.sin(t * 10 + i) * 30, armR: -40 - Math.sin(t * 10 + i) * 30 }); });
@@ -333,7 +334,7 @@ add(at('सात दिन,'), at('इंद्र का घमंड'), (t) =
 add(at('इंद्र का घमंड'), at('उस दिन'), (t) => {
   const t0 = at('इंद्र का घमंड');
   const clear = eo(seg(t, t0 + 0.3, t0 + 2.0));
-  const c = camPath(t, [[t0, 700, 900, 1.5], [at('हाथ जोड़कर') - 0.3, 700, 900, 1.45], [at('हाथ जोड़कर') + 0.6, 540, 1080, 1.0], [at('कामधेनु') + 0.6, 540, 940, 0.96], [at('अभिषेक') + 0.5, 420, 1060, 1.1], [at('उस दिन'), 420, 1060, 1.14]]);
+  const c = camPath(t, [[t0, 660, 980, 1.3], [at('हाथ जोड़कर') - 0.3, 640, 980, 1.26], [at('हाथ जोड़कर') + 0.6, 540, 1080, 1.0], [at('कामधेनु') + 0.6, 540, 940, 0.96], [at('अभिषेक') + 0.5, 420, 1060, 1.1], [at('उस दिन'), 420, 1060, 1.14]]);
   let w = `<g opacity="${(1 - clear).toFixed(2)}">${bg('storm')}</g><g opacity="${clear.toFixed(2)}">${bg('dawn')}${sun(540, 560, 110)}</g>`;
   w += ground(1500, '#8CBF6A', '#78AD5C');
   const fold = t > at('हाथ जोड़कर') - 0.1;
@@ -354,7 +355,7 @@ add(at('इंद्र का घमंड'), at('उस दिन'), (t) => {
   s += title('GHAMAND TOOT GAYA', 300, 84, seg(t, at('टूट'), at('टूट') + 0.3) * (1 - seg(t, at('हाथ जोड़कर') - 0.2, at('हाथ जोड़कर'))), '#FFF3DC');
   s += title('KAMDHENU', 300, 100, seg(t, at('कामधेनु'), at('कामधेनु') + 0.3) * (1 - seg(t, at('अभिषेक') - 0.2, at('अभिषेक'))), '#7A2E12');
   s += title('ABHISHEK', 300, 100, seg(t, at('अभिषेक'), at('अभिषेक') + 0.3), '#7A2E12');
-  s += flashRect(t, at('टूट'), 0.25, '#FFFFFF');
+  { const k = 1 - seg(t, at('टूट'), at('टूट') + 0.25); if (t >= at('टूट') && k > 0) s += `<rect width="1080" height="1920" fill="#FFF4DC" opacity="${(k * k * 0.35).toFixed(2)}"/>`; }
   return s;
 }, 'fade');
 
@@ -386,14 +387,21 @@ add(at('इसीलिए'), at('और परसों'), (t) => {
 // 14 PARSON: BHAI DOOJ — teaser
 add(at('और परसों'), 999, (t) => {
   const z = lerp(1.0, 1.08, seg(t, at('और परसों'), at('और परसों') + 9));
-  let w = tracker(t, 4, 4, at('पाँचवाँ') + 0.2);
   const yk = eo(seg(t, at('यमराज') - 0.2, at('यमराज') + 1.0));
-  let riv = `M-200 1600`; for (let x = -200; x <= 1300; x += 40) riv += ` L${x} ${(1600 + Math.sin(x / 90 + t * 2) * 10).toFixed(1)}`; riv += ' V2400 H-200Z';
-  w += `<g opacity="${yk.toFixed(2)}"><path d="${riv}" fill="#22306A"/><path d="${riv}" transform="translate(0 30)" fill="#1A2552"/>` + yamraj(380, 1620, 0.7) + yamuna(700, 1620, 0.75) + `</g>`;
+  let w = `<g transform="translate(0 ${(-260 * yk).toFixed(1)})" opacity="${(1 - 0.55 * yk).toFixed(2)}">` + tracker(t, 4, 4, at('पाँचवाँ') + 0.2) + `</g>`;
+  let riv = `M-200 1560`; for (let x = -200; x <= 1300; x += 40) riv += ` L${x} ${(1560 + Math.sin(x / 90 + t * 2) * 10).toFixed(1)}`; riv += ' V2400 H-200Z';
+  const sil = (fn, x, s) => fn(x, 1580, s).replace(/#1B1030/g, '#2C2152');
+  w += `<g opacity="${yk.toFixed(2)}"><circle cx="540" cy="1260" r="420" fill="url(#moonglow)"/><circle cx="540" cy="1260" r="190" fill="#FFF3D1" opacity=".9"/>
+        <path d="${riv}" fill="#2A3A7A"/><path d="${riv}" transform="translate(0 34)" fill="#1E2A5E"/>
+        <path d="M440 1600 Q540 1620 640 1600" stroke="#FFF3D1" stroke-width="6" opacity=".5" fill="none"/><path d="M470 1650 Q540 1662 610 1650" stroke="#FFF3D1" stroke-width="5" opacity=".35" fill="none"/>`
+       + `<g transform="translate(0 ${(60 * (1 - yk)).toFixed(1)})">` + sil(yamraj, 400, 0.78) + sil(yamuna, 690, 0.8) + `</g></g>`;
   let s = cam(540, 960, z, w);
-  s += title('PARSON', 520, 64, seg(t, at('और परसों'), at('और परसों') + 0.3), '#FFF3DC');
-  s += title('BHAI DOOJ', 660, 140, seg(t, at('भाई दूज'), at('भाई दूज') + 0.3), '#F5C04A', 'Baloo', 800, 'DEEPOTSAV · DIN 5 / 5');
-  s += title('YAMRAJ + YAMUNA', 1430, 58, seg(t, at('यमराज'), at('यमराज') + 0.3), '#FFE29A');
+  const tk = 1 - seg(t, at('यमराज') - 0.2, at('यमराज') + 0.3);
+  s += title('PARSON', 520, 64, seg(t, at('और परसों'), at('और परसों') + 0.3) * tk, '#FFF3DC');
+  s += title('BHAI DOOJ', 660, 140, seg(t, at('भाई दूज'), at('भाई दूज') + 0.3) * tk, '#F5C04A', 'Baloo', 800, 'DEEPOTSAV · DIN 5 / 5');
+  s += title('YAMRAJ', 330, 120, seg(t, at('यमराज'), at('यमराज') + 0.3), '#F5C04A', 'Baloo', 800, null);
+  s += title('AUR UNKI BEHEN YAMUNA', 440, 56, seg(t, at('यमराज') + 0.9, at('यमराज') + 1.2), '#FFF3DC');
+  s += title('BHAI DOOJ KI KAHANI · PARSON', 540, 36, seg(t, at('यमराज') + 1.8, at('यमराज') + 2.1), '#F5C04A');
   return s;
 }, 'fade');
 
@@ -432,6 +440,7 @@ function subs(t) {
 }
 
 window.renderAt = (t) => {
+  window.T_NOW = t;
   document.getElementById('v').innerHTML = frame(t);
   document.getElementById('subs').innerHTML = subs(t);
 };

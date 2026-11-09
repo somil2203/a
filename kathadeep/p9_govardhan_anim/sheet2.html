@@ -1,0 +1,12 @@
+<!doctype html><html><head><meta charset="utf-8"><style>@font-face{font-family:Baloo;src:url(../fonts/Baloo2.ttf)}html,body{margin:0}</style></head><body>
+<svg id="v" width="1080" height="1920" viewBox="0 0 1080 1920" xmlns="http://www.w3.org/2000/svg"></svg>
+<script src="art.js"></script><script src="art2.js"></script><script>
+const defs=`<defs>${ART_DEFS}<radialGradient id="halo"><stop offset="0" stop-color="#FFE7A8" stop-opacity=".9"/><stop offset="1" stop-color="#FFC94A" stop-opacity="0"/></radialGradient>
+<radialGradient id="rage"><stop offset="0" stop-color="#FF6A3A" stop-opacity=".9"/><stop offset="1" stop-color="#C1121F" stop-opacity="0"/></radialGradient>
+<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F3DDB8"/><stop offset="1" stop-color="#FFF4E0"/></linearGradient></defs>`;
+document.getElementById('v').innerHTML=defs+`<rect width="1080" height="1920" fill="url(#sky)"/>`+
+ krishna2({x:200,y:720,s:0.95,armR:-60,elbowR:-80,flute:true,glow:.5})+nand2({x:540,y:740,s:0.85,staff:true})+indra2({x:870,y:820,s:0.72})+
+ cow2({x:330,y:1130,s:0.95})+cow2({x:780,y:1130,s:0.9,flip:true,crown:true,cloth:true})+
+ gwala2({x:110,y:1560,s:0.75,stick:true})+gopi2({x:320,y:1560,s:0.75,pot:true,armR:-150,elbowR:-20})+indra2({x:560,y:1600,s:0.55,mood:'angry'})+krishna2({x:860,y:1560,s:0.75,armL:170,elbowL:0,liftHand:true,eyes:'open'})+
+ mountain2({x:540,y:1900,w:700,h:340,lifted:false});
+</script></body></html>
