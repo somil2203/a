@@ -32,3 +32,8 @@ kathadeep/p10_annakut_56bhog/cov/
 kathadeep/p10_annakut_56bhog/review.jpg
 kathadeep/p10_annakut_56bhog/st_sheet.jpg
 kathadeep/*/picture.mp4
+kathadeep/p1[0-9]_*/st*/
+kathadeep/p1[0-9]_*/cov/
+kathadeep/p1[0-9]_*/review.jpg
+kathadeep/p1[0-9]_*/st_sheet.jpg
+kathadeep/p*/render.log

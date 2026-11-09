@@ -20,7 +20,7 @@ const G2 = (x, y, s, inner, flip) => `<g transform="translate(${P2(x)} ${P2(y)})
 
 function closedEye(x, y, w = 15, col = '#2A1B3D', lash = true) {
   return `<path d="M${x - w} ${y - 2} Q${x} ${y + w * 0.62} ${x + w} ${y - 2}" stroke="${col}" stroke-width="4.5" fill="none" stroke-linecap="round"/>` +
-    (lash ? `<path d="M${x + w} ${y - 2} l7 -5 M${x + w - 5} ${y + 3} l6 2" stroke="${col}" stroke-width="3" stroke-linecap="round"/>` : '');
+    (lash ? `<path d="M${x - w} ${y - 2} l-7 -5 M${x - w + 3} ${y + 2} l-7 1" stroke="${col}" stroke-width="3" stroke-linecap="round"/>` : '');
 }
 function openEye(x, y, w = 13, col = '#2A1B3D') {
   return `<path d="M${x - w} ${y} Q${x} ${y - w * 0.95} ${x + w} ${y} Q${x} ${y + w * 0.7} ${x - w} ${y}Z" fill="#FFFDF8"/>
@@ -107,7 +107,7 @@ function krishna2(o = {}) {
         <rect x="-78" y="-576" width="156" height="20" rx="8" fill="#D9A02A"/><path d="M-70 -566 L70 -566" stroke="#FFF0B8" stroke-width="2"/>
         <circle cx="0" cy="-566" r="9" fill="#D8432F" stroke="#FFF0B8" stroke-width="2"/><circle cx="-40" cy="-566" r="6" fill="#2E9E5B"/><circle cx="40" cy="-566" r="6" fill="#2E9E5B"/>
         <circle cx="0" cy="-620" r="6" fill="#D8432F"/><circle cx="-30" cy="-612" r="4" fill="#2E9E5B"/><circle cx="30" cy="-612" r="4" fill="#2E9E5B"/>`;
-  s += feather(30, -616, 16 + sway * 0.5, 0.9);
+  if (!o.noFeather) s += feather(30, -616, 16 + sway * 0.5, 0.9);
   // makara kundal
   s += `<path d="M-84 -486 c-10 6 -12 22 0 30 c12 -2 14 -18 4 -26z" fill="url(#goldG)"/><path d="M84 -486 c10 6 12 22 0 30 c-12 -2 -14 -18 -4 -26z" fill="url(#goldG)"/>`;
   // face
