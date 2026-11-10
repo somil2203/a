@@ -20,7 +20,7 @@ def load(path, mono=True):
 
 def sfx(name):
     d = f"{KD}/sfx"
-    f = [x for x in os.listdir(d) if re.match(rf"mixkit_\d+_{name}\.mp3$", x)][0]
+    f = [x for x in os.listdir(d) if re.match(rf"(mixkit|kd)_\d+_{name}\.(mp3|wav)$", x)][0]
     return load(f"{d}/{f}")
 
 

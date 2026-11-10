@@ -2,7 +2,7 @@
 const {chromium}=require('playwright');const {spawn}=require('child_process');const fs=require('fs');
 (async()=>{const b=await chromium.launch();const p=await b.newPage({viewport:{width:1080,height:1920}});
 p.on('pageerror',e=>{console.error('PAGEERR',e.message);});
-await p.goto('file://'+process.cwd()+'/index.html');if(process.env.NOSUBS)await p.evaluate(()=>window.NOSUBS=1);await p.evaluate(()=>document.fonts.ready);
+await p.goto('file://'+process.cwd()+'/index.html');if(process.env.NOSUBS)await p.evaluate(()=>window.NOSUBS=1);await p.evaluate(async()=>{for(const f of ['92px Anton','24px SpaceMono','50px Baloo']){try{await document.fonts.load(f)}catch(e){}}await document.fonts.ready;});
 const a=process.argv.slice(2);
 if(a[0]==='--stills'){fs.mkdirSync(a[1],{recursive:true});for(const t of a.slice(2)){await p.evaluate(t=>{renderAt(t);if(window.NOSUBS)document.getElementById('subs').innerHTML='';},+t);await p.screenshot({path:`${a[1]}/s_${(+t).toFixed(2)}.jpg`,type:'jpeg',quality:85});}await b.close();return;}
 const end=await p.evaluate(()=>TIMES.END);const t0=+(a[1]||0),t1=+(a[2]||end);

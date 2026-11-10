@@ -209,7 +209,7 @@ function indra2(o = {}) {
     s += limb(-88, -520, 40, -110, 110, 96, 42, 32, S, '') + limb(88, -520, -40, 110, 110, 96, 42, 32, S, '');
     s += `<path d="M-16 -420 C-18 -460 -6 -488 0 -496 C6 -488 18 -460 16 -420Z" fill="${hand}"/>`;
   } else {
-    const vj = `<g transform="rotate(${-(o.armR ?? -130) - (o.elbowR ?? -20)})"><rect x="-8" y="-70" width="16" height="140" rx="6" fill="url(#goldG)"/>
+    const vj = o.held !== undefined ? o.held : `<g transform="rotate(${-(o.armR ?? -130) - (o.elbowR ?? -20)})"><rect x="-8" y="-70" width="16" height="140" rx="6" fill="url(#goldG)"/>
       <path d="M-30 -70 L-14 -120 L0 -96 L14 -120 L30 -70Z" fill="url(#goldG)"/><path d="M-30 70 L-14 120 L0 96 L14 120 L30 70Z" fill="url(#goldG)"/><circle r="18" fill="#C98A1E"/><circle r="8" fill="#FFE7A0"/></g>`;
     s += limb(-88, -520, o.armL ?? 16, o.elbowL ?? 10, 120, 104, 42, 32, S, handShape(hand, 1.2), { bangle: true, armlet: true });
     s += limb(88, -520, o.armR ?? -130, o.elbowR ?? -20, 120, 104, 42, 32, S, handShape(hand, 1.2), { bangle: true, armlet: true, held: vj });
