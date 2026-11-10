@@ -105,3 +105,16 @@ small Hinglish word-highlight subtitles). We keep our own length (~90 s). Museum
   `python3 edit.py` (audio mix) → `python3 tools/finalize.py <ep> FINAL_x.mp4 1 x x`.
 - Rules: one visual per spoken keyword; text that needs reading on light backgrounds uses dark ink; subtitles sit in a soft band;
   folk beliefs are stamped "LOK-MAANYATA" on screen; scripture refs shown when quoted.
+
+## 9. RETENTION FIX (10 Nov 2026) — from Instagram insights of the 9 Nov reels
+Data: Govardhan 2,700 views / 20 s avg / 52% skip; Brahmand 2,070 / 12 s / 47.6% skip; Kaliya 2,158 / 28 s. Typical reel ~5-6K
+in 24 h. Retention fell 100% -> 15-25% within 10-15 s, then stayed flat; views stopped growing after ~2 h. => the FIRST 3 SECONDS
+lost the test audience, not the length.
+Rules now built into tools/anim:
+1. `window.HOOK = {l1, l2, t1, y, size}` in scenes.js: big two-line hook text at FULL size from frame 0 (no fade-in), dark band,
+   until ~t1 (2-4 s). Cover = this hook frame (render with NOSUBS=1 at ~0.5 s).
+2. Cold open: frame 0 shows the most dramatic image of the story (giant foot on the earth / Krishna in every home / the giant
+   form + bowing Kanha), already moving, with an impact SFX + boom at 0.0 s. Never open on a calm wide establishing shot.
+3. Safe zone: subtitles at bottom:430px (Instagram's caption/username overlay covers the bottom ~380 px); titles shifted
+   +70 px (SAFE_TITLES) away from the top bar. Key action stays between y 300 and 1450.
+4. Posting: >= 4 hours between reels on the same day; 4-5 hashtags only.

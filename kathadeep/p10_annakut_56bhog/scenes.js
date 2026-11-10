@@ -5,11 +5,12 @@ const rays = (cx, cy, n, op, t, col = '#FFF2C6') => [...Array(n)].map((_, i) => 
   return `<path d="M${cx} ${cy} L${(cx + Math.cos(a) * 2400).toFixed(0)} ${(cy + Math.sin(a) * 2400).toFixed(0)} L${(cx + Math.cos(b) * 2400).toFixed(0)} ${(cy + Math.sin(b) * 2400).toFixed(0)}Z" fill="${col}" opacity="${op}"/>`; }).join('');
 const pop = (t, t0, d = 0.35) => back(seg(t, t0, t0 + d));
 const C56 = at('छप्पन।');
+window.HOOK = { l1: 'कृष्ण ने ख़ुद को', l2: 'प्रणाम किया?', t1: at('और उनका ही') - 0.1, y: 860 };
 
 // 0 HOOK — little Krishna bows to... himself
 add(0, at('आज अन्नकूट'), (t) => {
-  const gk = eo(seg(t, at('ख़ुद को') - 0.2, at('ख़ुद को') + 1.2));
-  const c = camPath(t, [[0, 330, 1300, 1.9], [at('ख़ुद को') + 0.2, 330, 1260, 1.6], [at('और उनका ही') + 0.3, 540, 980, 0.95], [at('पूरे ब्रज'), 540, 1000, 1.0], [at('आज अन्नकूट'), 600, 900, 1.15]]);
+  const gk = Math.max(0.9, eo(seg(t, at('ख़ुद को') - 0.2, at('ख़ुद को') + 1.2)));
+  const c = camPath(t, [[0, 470, 1180, 1.12], [at('ख़ुद को') + 0.2, 380, 1320, 1.5], [at('और उनका ही') + 0.3, 540, 980, 0.95], [at('पूरे ब्रज'), 540, 1000, 1.0], [at('आज अन्नकूट'), 600, 900, 1.15]]);
   let w = bg('dusk') + stars(t, 30);
   w += giantKrishna(620, 1200, 1.55, gk, t);
   w += mountain({ x: 600, y: 1520, w: 1100, h: 520, t, diyas: true });
@@ -21,7 +22,6 @@ add(0, at('आज अन्नकूट'), (t) => {
   w += krishna({ x: 300, y: 1690, s: 0.62, armL: 38, elbowL: -112, armR: -38, elbowR: 112, tilt: 8, eyes: 'closed' });
   w += person({ x: 150, y: 1700, s: 0.5, gopi: true, veil: '#C2405A', top: '#F2A03D', armL: 38, elbowL: -112, armR: -38, elbowR: 112 });
   let s = cam(...c, w);
-  s += title('KHUD KO HI PRANAAM?', 280, 78, seg(t, at('ख़ुद को'), at('ख़ुद को') + 0.3) * (1 - seg(t, at('और उनका ही') - 0.2, at('और उनका ही'))), '#FFE29A');
   s += title('DOOSRA ROOP', 280, 96, seg(t, at('और उनका ही') + 0.5, at('और उनका ही') + 0.8) * (1 - seg(t, at('पूरे ब्रज') - 0.2, at('पूरे ब्रज'))), '#FFE29A');
   s += title('BRAJ KA SAARA BHOG', 280, 84, seg(t, at('पूरे ब्रज'), at('पूरे ब्रज') + 0.3), '#FFE29A');
   return s;

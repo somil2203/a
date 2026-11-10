@@ -18,7 +18,19 @@ function frame(t) {
     } else if (cur.tin === 'flash') out = `<g opacity="${(1 - k).toFixed(3)}">${prev}</g><g opacity="${k.toFixed(3)}">${out}</g><rect width="1080" height="1920" fill="#FFE2C0" opacity="${(Math.sin(k * Math.PI) * 0.85).toFixed(2)}"/>`;
     else out = `<g opacity="${(1 - k).toFixed(3)}">${prev}</g><g opacity="${k.toFixed(3)}">${out}</g>`;
   }
-  return DEFS + out + `<rect width="1080" height="1920" fill="url(#vig)"/>`;
+  return DEFS + out + `<rect width="1080" height="1920" fill="url(#vig)"/>` + hookCard(t);
+}
+
+// ------------------------------------------------------------------ HOOK CARD (retention fix 10 Nov 2026)
+// Instagram data: ~50% skip in the first seconds when the opening had small, fading-in text. The hook text is now
+// on screen at full size from frame 0 (no fade-in), high contrast, inside the safe zone, until HOOK.t1.
+function hookCard(t) {
+  const H0 = window.HOOK; if (!H0 || t > H0.t1) return '';
+  const out = clamp((H0.t1 - t) / 0.25), pulse = 1 + 0.07 * Math.max(0, 1 - t / 0.3) + 0.012 * Math.sin(t * 9);
+  const y = H0.y || 520, s1 = H0.size || 118;
+  const line = (txt, yy, col, sz) => `<text x="540" y="${yy}" text-anchor="middle" font-family="Baloo" font-weight="800" font-size="${sz}" fill="${col}" stroke="#14060A" stroke-width="${(sz * 0.11).toFixed(1)}" paint-order="stroke" stroke-linejoin="round">${txt}</text>`;
+  return `<g opacity="${out.toFixed(2)}"><rect x="0" y="${y - s1 * 1.3}" width="1080" height="${s1 * 2.9}" fill="#0A0410" opacity=".42"/>
+    <g transform="translate(540 ${y}) scale(${pulse.toFixed(3)}) translate(-540 ${-y})">${line(H0.l1, y, '#FFFFFF', s1)}${H0.l2 ? line(H0.l2, y + s1 * 1.12, '#FFD24A', s1) : ''}</g></g>`;
 }
 
 // ------------------------------------------------------------------ subtitles (Hinglish, word highlight)

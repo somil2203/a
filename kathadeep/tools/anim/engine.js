@@ -51,6 +51,7 @@ function water(t, level, a = 0.85) { // level = y of water surface
   return `<path d="${p}" fill="#3E6FA8" opacity="${a}"/><path d="${p}" transform="translate(0 26)" fill="#2D5486" opacity="${a}"/>`;
 }
 function title(txt, y, size, k, col = '#F5C04A', font = 'Baloo', weight = 800, sub = null, subCol = '#FFF3DC') {
+  if (window.SAFE_TITLES && y < 700) y += 70;   // keep clear of Instagram's top bar
   if (k <= 0) return '';
   const sc = lerp(0.8, 1, back(k)), op = clamp(k * 1.6);
   let s = `<g opacity="${op.toFixed(2)}" transform="translate(540 ${y}) scale(${sc.toFixed(3)})"><text x="0" y="0" text-anchor="middle" font-family="${font}" font-weight="${weight}" font-size="${size}" fill="${col}" stroke="#2A1408" stroke-width="${size * 0.06}" paint-order="stroke" letter-spacing="${size > 100 ? 2 : 1}">${txt}</text>`;
