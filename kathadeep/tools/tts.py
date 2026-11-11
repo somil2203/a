@@ -3,7 +3,8 @@ The API key is injected by the session's network proxy; the header value here is
 usage: python3 tts.py PROJECT_DIR      -> vo/raw.mp3 + vo/alignment.json
 """
 import base64, json, os, sys, urllib.request
-VOICE = "vIdhHAZdn1bGjKe1dFw8"   # Rudra – Intense Documentary Narrator
+import os
+VOICE = os.environ.get("KD_VOICE", "vIdhHAZdn1bGjKe1dFw8")   # default Rudra; Kanika (female, mythology) = xccfcojYYGnqTTxwZEDU
 MODEL = "eleven_v3"
 d = sys.argv[1]
 text = open(f"{d}/vo/script.txt").read().strip()
