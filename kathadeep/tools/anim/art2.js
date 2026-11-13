@@ -176,7 +176,7 @@ function nand2(o = {}) {
   s += `<path d="M-86 -440 C-100 -360 -106 -250 -96 -140 Q0 -120 96 -140 C106 -250 100 -360 86 -440Z" fill="url(#creamG)"/>`;
   s += `<path d="M-96 -150 Q0 -128 96 -150 L96 -136 Q0 -114 -96 -136Z" fill="#E86A3E"/><path d="M-20 -430 L-26 -150 M20 -430 L26 -150" stroke="#E2D6BE" stroke-width="3"/>`;
   s += `<path d="M-84 -446 C-40 -400 30 -330 80 -280 L92 -310 C40 -360 -20 -420 -60 -456Z" fill="#E86A3E"/>`;
-  const armR = limb(84, -436, o.armR ?? -10, o.elbowR ?? -6, 120, 110, 40, 32, '#F4ECDC', handShape('#E3A27C', 1.2), { held: o.staff ? `<rect x="-8" y="-280" width="16" height="560" rx="8" fill="#7A4A22"/><circle cx="0" cy="-286" r="12" fill="#9A6A34"/>` : '' });
+  const armR = limb(84, -436, o.armR ?? -10, o.elbowR ?? -6, 120, 110, 40, 32, '#F4ECDC', handShape('#E3A27C', 1.2), { held: o.held !== undefined ? o.held : o.staff ? `<rect x="-8" y="-280" width="16" height="560" rx="8" fill="#7A4A22"/><circle cx="0" cy="-286" r="12" fill="#9A6A34"/>` : '' });
   const armL = limb(-84, -436, o.armL ?? 10, o.elbowL ?? 6, 120, 110, 40, 32, '#F4ECDC', handShape('#E3A27C', 1.2));
   s += armL + armR;
   s += `<path d="M-20 -480 L-20 -440 L20 -440 L20 -480Z" fill="#C98660"/>`;
@@ -262,7 +262,7 @@ function gwala2(o = {}) {
   s += `<path d="M-58 -260 C-64 -210 -66 -170 -60 -124 Q0 -110 60 -124 C66 -170 64 -210 58 -260Z" fill="${o.dhoti || '#F3ECDD'}"/><path d="M-6 -256 L-10 -118 M6 -256 L10 -118" stroke="#DCD2BE" stroke-width="3"/>`;
   s += `<path d="M-52 -360 C-60 -320 -60 -290 -56 -258 L56 -258 C60 -290 60 -320 52 -360 Q0 -372 -52 -360Z" fill="${S}"/><path d="M-50 -360 L46 -262" stroke="${top}" stroke-width="18"/>`;
   s += limb(-52, -352, o.armL ?? 18, o.elbowL ?? 14, 78, 72, 26, 20, S, handShape(S, 0.9), { bangle: true });
-  s += limb(52, -352, o.armR ?? -18, o.elbowR ?? -14, 78, 72, 26, 20, S, handShape(S, 0.9), { bangle: true, held: o.stick ? `<g transform="rotate(${-(o.armR ?? -18) - (o.elbowR ?? -14)})"><rect x="-6" y="-200" width="12" height="380" rx="6" fill="#7A4A22"/></g>` : '' });
+  s += limb(52, -352, o.armR ?? -18, o.elbowR ?? -14, 78, 72, 26, 20, S, handShape(S, 0.9), { bangle: true, held: o.held !== undefined ? o.held : o.stick ? `<g transform="rotate(${-(o.armR ?? -18) - (o.elbowR ?? -14)})"><rect x="-6" y="-200" width="12" height="380" rx="6" fill="#7A4A22"/></g>` : '' });
   s += `<path d="M-14 -392 L-14 -358 L14 -358 L14 -392Z" fill="${S}"/>`;
   s += `<path d="M-50 -436 C-52 -392 -28 -380 0 -380 C28 -380 52 -392 50 -436 C50 -476 28 -494 0 -494 C-28 -494 -50 -476 -50 -436Z" fill="${S}"/>`;
   s += `<path d="M-54 -442 C-58 -500 -20 -510 0 -508 C20 -510 58 -500 54 -442 C44 -470 22 -474 0 -472 C-22 -474 -44 -470 -54 -442Z" fill="#1F1A3A"/>`;
